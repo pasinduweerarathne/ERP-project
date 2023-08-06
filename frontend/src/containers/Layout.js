@@ -3,7 +3,6 @@ import LeftSidebar from "./LeftSidebar";
 import { useSelector, useDispatch } from "react-redux";
 import RightSidebar from "./RightSidebar";
 import { useEffect } from "react";
-import { removeNotificationMessage } from "../features/common/headerSlice";
 import {
   NotificationContainer,
   NotificationManager,
@@ -23,7 +22,6 @@ function Layout() {
         NotificationManager.success(newNotificationMessage, "Success");
       if (newNotificationStatus === 0)
         NotificationManager.error(newNotificationMessage, "Error");
-      dispatch(removeNotificationMessage());
     }
   }, [newNotificationMessage]);
 

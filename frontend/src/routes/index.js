@@ -3,7 +3,6 @@
 import { lazy } from "react";
 
 const Dashboard = lazy(() => import("../pages/protected/Dashboard"));
-const Welcome = lazy(() => import("../pages/protected/Welcome"));
 const Page404 = lazy(() => import("../pages/protected/404"));
 const Blank = lazy(() => import("../pages/protected/Blank"));
 const Charts = lazy(() => import("../pages/protected/Charts"));
@@ -16,6 +15,9 @@ const Bills = lazy(() => import("../pages/protected/Bills"));
 const ProfileSettings = lazy(() =>
   import("../pages/protected/ProfileSettings")
 );
+const Products = lazy(() => import("../pages/protected/Products"));
+const Employees = lazy(() => import("../pages/protected/Employees"));
+const Salary = lazy(() => import("../pages/protected/Salary"));
 
 const routes = [
   {
@@ -23,8 +25,16 @@ const routes = [
     component: Dashboard, // view rendered
   },
   {
-    path: "/welcome", // the url
-    component: Welcome, // view rendered
+    path: "/proudcts",
+    component: Products,
+  },
+  {
+    path: "/employee-management",
+    component: Employees,
+  },
+  {
+    path: "/salary-management",
+    component: Salary,
   },
   {
     path: "/leads",
