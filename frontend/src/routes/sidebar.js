@@ -55,12 +55,12 @@ const routes = [
     name: "Products",
   },
   {
-    path: "/app/Employee Management",
+    path: "/app/employee-management",
     icon: <UserGroupIcon className={iconClasses} />,
     name: "Employee Management",
   },
   {
-    path: "/app/Employee Management",
+    path: "/app/salary-management",
     icon: <BanknotesIcon className={iconClasses} />,
     name: "Salary Management",
   },
