@@ -1,22 +1,21 @@
 import { themeChange } from "theme-change";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import BellIcon from "@heroicons/react/24/outline/BellIcon";
 import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
 import MoonIcon from "@heroicons/react/24/outline/MoonIcon";
 import SunIcon from "@heroicons/react/24/outline/SunIcon";
+import { openRightDrawer } from "../features/common/rightDrawerSlice";
+import { RIGHT_DRAWER_TYPES } from "../utils/globalConstantUtil";
 
-import { Link, redirect, useNavigate } from "react-router-dom";
-import { logout } from "../features/user/authSlice";
-import { showNotification } from "../features/common/headerSlice";
+import { Link } from "react-router-dom";
 
 function Header() {
   const dispatch = useDispatch();
-  const { pageTitle } = useSelector((state) => state.header);
+  const { noOfNotifications, pageTitle } = useSelector((state) => state.header);
   const [currentTheme, setCurrentTheme] = useState(
     localStorage.getItem("theme")
   );
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     themeChange(false);
@@ -30,20 +29,22 @@ function Header() {
         setCurrentTheme("light");
       }
     }
+    // 👆 false parameter is required for react project
   }, []);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    setLoading(true);
-    dispatch(logout);
-    setLoading(false);
+  // Opening right sidebar for notification
+  const openNotification = () => {
+    dispatch(
+      openRightDrawer({
+        header: "Notifications",
+        bodyType: RIGHT_DRAWER_TYPES.NOTIFICATION,
+      })
+    );
   };
 
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    navigate("/login");
-    dispatch(showNotification({ message: "Logout successfully!", status: 1 }));
+  function logoutUser() {
+    localStorage.clear();
+    window.location.href = "/";
   }
 
   return (
@@ -61,6 +62,17 @@ function Header() {
         </div>
 
         <div className="order-last">
+          {/* Multiple theme selection, uncomment this if you want to enable multiple themes selection, 
+                also includes corporate and retro themes in tailwind.config file */}
+
+          {/* <select className="select select-sm mr-4" data-choose-theme>
+                    <option disabled selected>Theme</option>
+                    <option value="light">Default</option>
+                    <option value="dark">Dark</option>
+                    <option value="corporate">Corporate</option>
+                    <option value="retro">Retro</option>
+                </select> */}
+
           {/* Light and dark theme selection toogle **/}
           <label className="swap ">
             <input type="checkbox" />
@@ -99,10 +111,12 @@ function Header() {
                   <span className="badge">New</span>
                 </Link>
               </li>
-              {/* <li className=''><Link to={'/app/settings-billing'}>Bill History</Link></li> */}
+              <li className="">
+                <Link to={"/app/settings-billing"}>Bill History</Link>
+              </li>
               <div className="divider mt-0 mb-0"></div>
               <li>
-                <a onClick={handleLogout}>Logout</a>
+                <a onClick={logoutUser}>Logout</a>
               </li>
             </ul>
           </div>

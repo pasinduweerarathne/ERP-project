@@ -2,7 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const headerSlice = createSlice({
   name: "header",
-  initialState: {},
+  initialState: {
+    pageTitle: "Home", // current page title state management
+    newNotificationMessage: "", // message of notification to be shown
+    newNotificationStatus: 1, // to check the notification type -  success/ error/ info
+  },
   reducers: {
     setPageTitle: (state, action) => {
       state.pageTitle = action.payload.title;
