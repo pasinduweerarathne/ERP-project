@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TitleCard from "../../components/Cards/TitleCard";
 import { openModal } from "../common/modalSlice";
-import { deleteLead, getLeadsContent } from "./leadSlice";
+import { getEmployeesContent } from "./employeeSlice";
 import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
@@ -14,11 +14,11 @@ import { showNotification } from "../common/headerSlice";
 const TopSideButtons = () => {
   const dispatch = useDispatch();
 
-  const openAddNewLeadModal = () => {
+  const openAddNewEmployeeModal = () => {
     dispatch(
       openModal({
-        title: "Add New Lead",
-        bodyType: MODAL_BODY_TYPES.LEAD_ADD_NEW,
+        title: "Add New Employee",
+        bodyType: MODAL_BODY_TYPES.EMPLOYEE_ADD_NEW,
       })
     );
   };
@@ -27,7 +27,7 @@ const TopSideButtons = () => {
     <div className="inline-block float-right">
       <button
         className="btn px-6 btn-sm normal-case btn-primary"
-        onClick={() => openAddNewLeadModal()}
+        onClick={() => openAddNewEmployeeModal()}
       >
         Add New
       </button>
@@ -35,12 +35,12 @@ const TopSideButtons = () => {
   );
 };
 
-const Employees = () => {
-  const { leads } = useSelector((state) => state.lead);
+function EmployeeManagement() {
+  const { employees } = useSelector((state) => state.employee);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getLeadsContent());
+    dispatch(getEmployeesContent());
   }, []);
 
   const getDummyStatus = (index) => {
@@ -54,15 +54,16 @@ const Employees = () => {
     else return <div className="badge badge-ghost">Open</div>;
   };
 
-  const deleteCurrentLead = (index) => {
+  const deleteCurrentEmployee = (index) => {
     dispatch(
       openModal({
         title: "Confirmation",
         bodyType: MODAL_BODY_TYPES.CONFIRMATION,
         extraObject: {
-          message: `Are you sure you want to delete this lead?`,
-          type: CONFIRMATION_MODAL_CLOSE_TYPES.LEAD_DELETE,
+          message: `Are you sure you want to delete this employee?`,
+          type: CONFIRMATION_MODAL_CLOSE_TYPES.EMPLOYEE_DELETE,
           index,
+          toastMsg: "Employee Deleted!",
         },
       })
     );
@@ -71,7 +72,7 @@ const Employees = () => {
   return (
     <>
       <TitleCard
-        title="Current Leads"
+        title="Current Employee"
         topMargin="mt-2"
         TopSideButtons={<TopSideButtons />}
       >
@@ -89,7 +90,7 @@ const Employees = () => {
               </tr>
             </thead>
             <tbody>
-              {leads.map((l, k) => {
+              {employees.map((l, k) => {
                 return (
                   <tr key={k}>
                     <td>
@@ -118,7 +119,7 @@ const Employees = () => {
                     <td>
                       <button
                         className="btn btn-square btn-ghost"
-                        onClick={() => deleteCurrentLead(k)}
+                        onClick={() => deleteCurrentEmployee(k)}
                       >
                         <TrashIcon className="w-5" />
                       </button>
@@ -132,6 +133,6 @@ const Employees = () => {
       </TitleCard>
     </>
   );
-};
+}
 
-export default Employees;
+export default EmployeeManagement;

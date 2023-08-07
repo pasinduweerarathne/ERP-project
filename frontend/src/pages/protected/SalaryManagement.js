@@ -1,16 +1,17 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setPageTitle } from "../../features/common/headerSlice";
-import Salary from "../../features/salary";
+import SalaryManagement from "../../features/salaryManagement";
 
-const InternalPage = () => {
+function InternalPage() {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(setPageTitle({ title: "Salary Management" }));
   }, []);
 
-  return <Salary />;
-};
+  return <SalaryManagement />;
+}
 
 export default InternalPage;

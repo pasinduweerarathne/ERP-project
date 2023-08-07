@@ -3,6 +3,7 @@
 import { lazy } from "react";
 
 const Dashboard = lazy(() => import("../pages/protected/Dashboard"));
+const Welcome = lazy(() => import("../pages/protected/Welcome"));
 const Page404 = lazy(() => import("../pages/protected/404"));
 const Blank = lazy(() => import("../pages/protected/Blank"));
 const Charts = lazy(() => import("../pages/protected/Charts"));
@@ -15,67 +16,36 @@ const Bills = lazy(() => import("../pages/protected/Bills"));
 const ProfileSettings = lazy(() =>
   import("../pages/protected/ProfileSettings")
 );
+const GettingStarted = lazy(() => import("../pages/GettingStarted"));
+const DocFeatures = lazy(() => import("../pages/DocFeatures"));
+const DocComponents = lazy(() => import("../pages/DocComponents"));
 const Products = lazy(() => import("../pages/protected/Products"));
-const Employees = lazy(() => import("../pages/protected/Employees"));
-const Salary = lazy(() => import("../pages/protected/Salary"));
+const EmployeeManagement = lazy(() =>
+  import("../pages/protected/EmployeeManagement")
+);
+const SalaryManagement = lazy(() =>
+  import("../pages/protected/SalaryManagement")
+);
 
 const routes = [
-  {
-    path: "/dashboard", // the url
-    component: Dashboard, // view rendered
-  },
-  {
-    path: "/proudcts",
-    component: Products,
-  },
-  {
-    path: "/employee-management",
-    component: Employees,
-  },
-  {
-    path: "/salary-management",
-    component: Salary,
-  },
-  {
-    path: "/leads",
-    component: Leads,
-  },
-  {
-    path: "/settings-team",
-    component: Team,
-  },
-  {
-    path: "/calendar",
-    component: Calendar,
-  },
-  {
-    path: "/transactions",
-    component: Transactions,
-  },
-  {
-    path: "/settings-profile",
-    component: ProfileSettings,
-  },
-  {
-    path: "/settings-billing",
-    component: Bills,
-  },
-  {
-    path: "/integration",
-    component: Integration,
-  },
-  {
-    path: "/charts",
-    component: Charts,
-  },
-  {
-    path: "/404",
-    component: Page404,
-  },
-  {
-    path: "/blank",
-    component: Blank,
-  },
+  { path: "/dashboard", component: Dashboard },
+  { path: "/employee-management", component: EmployeeManagement },
+  { path: "/salary-management", component: SalaryManagement },
+  { path: "/products", component: Products },
+  { path: "/welcome", component: Welcome },
+  { path: "/leads", component: Leads },
+  { path: "/settings-team", component: Team },
+  { path: "/calendar", component: Calendar },
+  { path: "/transactions", component: Transactions },
+  { path: "/settings-profile", component: ProfileSettings },
+  { path: "/settings-billing", component: Bills },
+  { path: "/getting-started", component: GettingStarted },
+  { path: "/features", component: DocFeatures },
+  { path: "/components", component: DocComponents },
+  { path: "/integration", component: Integration },
+  { path: "/charts", component: Charts },
+  { path: "/404", component: Page404 },
+  { path: "/blank", component: Blank },
 ];
 
 export default routes;
