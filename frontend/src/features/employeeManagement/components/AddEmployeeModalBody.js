@@ -8,7 +8,7 @@ import { addNewEmployee } from "../employeeSlice";
 const INITIAL_EMPLOYEE_OBJ = {
   first_name: "",
   last_name: "",
-  email: "",
+  // email: "",
 };
 
 function AddEmployeeModalBody({ closeModal }) {
@@ -20,12 +20,12 @@ function AddEmployeeModalBody({ closeModal }) {
   const saveNewEmployee = () => {
     if (employeeObj.first_name.trim() === "")
       return setErrorMessage("First Name is required!");
-    else if (employeeObj.email.trim() === "")
-      return setErrorMessage("Email id is required!");
+    // else if (employeeObj.email.trim() === "")
+    // return setErrorMessage("Email id is required!");
     else {
       let newEmployeeObj = {
         id: 7,
-        email: employeeObj.email,
+        // email: employeeObj.email,
         first_name: employeeObj.first_name,
         last_name: employeeObj.last_name,
         avatar: "https://reqres.in/img/faces/1-image.jpg",
@@ -61,14 +61,14 @@ function AddEmployeeModalBody({ closeModal }) {
         updateFormValue={updateFormValue}
       />
 
-      <InputText
+      {/* <InputText
         type="email"
         defaultValue={employeeObj.email}
         updateType="email"
         containerStyle="mt-4"
         labelTitle="Email Id"
         updateFormValue={updateFormValue}
-      />
+      /> */}
 
       <ErrorText styleClass="mt-16">{errorMessage}</ErrorText>
       <div className="modal-action">

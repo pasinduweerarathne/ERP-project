@@ -1,15 +1,15 @@
 import moment from "moment";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TitleCard from "../../components/Cards/TitleCard";
 import { openModal } from "../common/modalSlice";
-import { getEmployeesContent } from "./employeeSlice";
 import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
 } from "../../utils/globalConstantUtil";
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
 import { showNotification } from "../common/headerSlice";
+import { CURRENT_EMPLOYEES } from "../../utils/dummyData";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -36,25 +36,10 @@ const TopSideButtons = () => {
 };
 
 function EmployeeManagement() {
-  const { employees } = useSelector((state) => state.employee);
   const dispatch = useDispatch();
+  const [employees, setEmployees] = useState(CURRENT_EMPLOYEES);
 
-  useEffect(() => {
-    dispatch(getEmployeesContent());
-  }, []);
-
-  const getDummyStatus = (index) => {
-    if (index % 5 === 0) return <div className="badge">Not Interested</div>;
-    else if (index % 5 === 1)
-      return <div className="badge badge-primary">In Progress</div>;
-    else if (index % 5 === 2)
-      return <div className="badge badge-secondary">Sold</div>;
-    else if (index % 5 === 3)
-      return <div className="badge badge-accent">Need Followup</div>;
-    else return <div className="badge badge-ghost">Open</div>;
-  };
-
-  const deleteCurrentEmployee = (index) => {
+  const deleteCurrentEmployee = (index, id) => {
     dispatch(
       openModal({
         title: "Confirmation",
@@ -67,6 +52,7 @@ function EmployeeManagement() {
         },
       })
     );
+    setEmployees(employees.filter((e) => e.id !== id));
   };
 
   return (
@@ -82,44 +68,40 @@ function EmployeeManagement() {
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Email Id</th>
                 <th>Created At</th>
-                <th>Status</th>
-                <th>Assigned To</th>
+                <th>Salary</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {employees.map((l, k) => {
+              {employees.map((e, k) => {
                 return (
                   <tr key={k}>
                     <td>
                       <div className="flex items-center space-x-3">
                         <div className="avatar">
                           <div className="mask mask-squircle w-12 h-12">
-                            <img src={l.avatar} alt="Avatar" />
+                            <img src={e.avatar} alt="Avatar" />
                           </div>
                         </div>
                         <div>
-                          <div className="font-bold">{l.first_name}</div>
+                          <div className="font-bold">{e.first_name}</div>
                           <div className="text-sm opacity-50">
-                            {l.last_name}
+                            {e.last_name}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td>{l.email}</td>
                     <td>
                       {moment(new Date())
                         .add(-5 * (k + 2), "days")
                         .format("DD MMM YY")}
                     </td>
-                    <td>{getDummyStatus(k)}</td>
-                    <td>{l.last_name}</td>
+                    <td>{e.salary}</td>
                     <td>
                       <button
                         className="btn btn-square btn-ghost"
-                        onClick={() => deleteCurrentEmployee(k)}
+                        onClick={() => deleteCurrentEmployee(k, e.id)}
                       >
                         <TrashIcon className="w-5" />
                       </button>

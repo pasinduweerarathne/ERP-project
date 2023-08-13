@@ -32,6 +32,7 @@ export const employeeSlice = createSlice({
       state.isLoading = true;
     },
     [getEmployeesContent.fulfilled]: (state, action) => {
+      console.log(action.payload.data);
       state.employees = action.payload.data;
       state.isLoading = false;
     },

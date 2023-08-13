@@ -20,18 +20,24 @@ const GettingStarted = lazy(() => import("../pages/GettingStarted"));
 const DocFeatures = lazy(() => import("../pages/DocFeatures"));
 const DocComponents = lazy(() => import("../pages/DocComponents"));
 const Products = lazy(() => import("../pages/protected/Products"));
+const SingleProduct = lazy(() => import("../pages/protected/ProductZone"));
 const EmployeeManagement = lazy(() =>
   import("../pages/protected/EmployeeManagement")
 );
 const SalaryManagement = lazy(() =>
   import("../pages/protected/SalaryManagement")
 );
+const ProductCategory = lazy(() =>
+  import("../pages/protected/ProductCategory")
+);
+const ProductZone = lazy(() => import("../pages/protected/ProductZone"));
 
 const routes = [
   { path: "/dashboard", component: Dashboard },
   { path: "/employee-management", component: EmployeeManagement },
   { path: "/salary-management", component: SalaryManagement },
   { path: "/products", component: Products },
+  { path: "/product", component: SingleProduct },
   { path: "/welcome", component: Welcome },
   { path: "/leads", component: Leads },
   { path: "/settings-team", component: Team },
@@ -46,6 +52,8 @@ const routes = [
   { path: "/charts", component: Charts },
   { path: "/404", component: Page404 },
   { path: "/blank", component: Blank },
+  { path: "/products/:type", component: ProductCategory },
+  { path: "/products/:type/:zone", component: ProductZone },
 ];
 
 export default routes;
