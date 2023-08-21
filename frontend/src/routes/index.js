@@ -38,7 +38,7 @@ const routes = [
   { path: "/salary-management", component: SalaryManagement },
   { path: "/products", component: Products },
   { path: "/product", component: SingleProduct },
-  { path: "/welcome", component: Welcome },
+  // { path: "/welcome", component: Welcome },
   { path: "/leads", component: Leads },
   { path: "/settings-team", component: Team },
   { path: "/calendar", component: Calendar },

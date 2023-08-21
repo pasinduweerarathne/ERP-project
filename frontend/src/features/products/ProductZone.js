@@ -1,14 +1,23 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
+// Date, Name, Type of the work,
 
 const ProductZone = () => {
-  const { zone } = useParams();
+  const { zone, type } = useParams();
 
   return (
     <>
-      <h1 className="text-center text-4xl font-extrabold dark:text-white">
-        {zone} Zone
-      </h1>
+      <div className="dark:text-white flex items-center justify-between">
+        <h1 className="text-center text-4xl font-extrabold dark:text-white">
+          Zone {zone}
+        </h1>
+        <NavLink
+          className={"bg-primary rounded-2xl px-5 py-2 text-white"}
+          to={`/app/products/${type}`}
+        >
+          Back
+        </NavLink>
+      </div>
 
       <div className="grid lg:grid-cols-3 mt-4 md:grid-cols-2 grid-cols-1 gap-6">
         <div className="stats shadow p-5">

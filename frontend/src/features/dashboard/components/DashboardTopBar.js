@@ -32,7 +32,7 @@ function DashboardTopBar({ updateDashboardPeriod }) {
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div className="">
         <Datepicker
-          containerClassName="w-72 "
+          containerClassName="w-72"
           value={dateValue}
           theme={"light"}
           inputClassName="input input-bordered w-72"
@@ -52,7 +52,7 @@ function DashboardTopBar({ updateDashboardPeriod }) {
                 updateFormValue={updateSelectBoxValue}
             /> */}
       </div>
-      <div className="text-right ">
+      {/* <div className="text-right ">
         <button className="btn btn-ghost btn-sm normal-case">
           <ArrowPathIcon className="w-4 mr-2" />
           Refresh Data
@@ -87,7 +87,7 @@ function DashboardTopBar({ updateDashboardPeriod }) {
             </li>
           </ul>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import ZoneCard from "./components/ZoneCard";
 
 const ProductCategory = () => {
@@ -7,9 +7,17 @@ const ProductCategory = () => {
 
   return (
     <div>
-      <h1 className="text-center text-4xl font-extrabold dark:text-white">
-        {type} Section
-      </h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-center text-4xl font-extrabold dark:text-white">
+          {type} Section
+        </h1>
+        <NavLink
+          className={"bg-primary rounded-2xl px-5 py-2 text-white"}
+          to={`/app/products`}
+        >
+          Back
+        </NavLink>
+      </div>
       <div className="grid lg:grid-cols-3 mt-4 md:grid-cols-2 grid-cols-1 gap-6">
         <div className="stats shadow p-5">
           <div className="flex items-center justify-around">
