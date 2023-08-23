@@ -62,7 +62,6 @@ function EmployeeManagement() {
         topMargin="mt-2"
         TopSideButtons={<TopSideButtons />}
       >
-        {/* Leads List in table format loaded from slice after api call */}
         <div className="overflow-x-auto w-full">
           <table className="table w-full">
             <thead>

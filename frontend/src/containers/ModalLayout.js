@@ -5,6 +5,7 @@ import { closeModal } from "../features/common/modalSlice";
 import AddLeadModalBody from "../features/leads/components/AddLeadModalBody";
 import ConfirmationModalBody from "../features/common/components/ConfirmationModalBody";
 import AddEmployeeModalBody from "../features/employeeManagement/components/AddEmployeeModalBody";
+import AddZoneDetailsModalBody from "../features/products/components/AddZoneDetailsModalBody";
 
 function ModalLayout() {
   const { isOpen, bodyType, size, extraObject, title } = useSelector(
@@ -42,6 +43,12 @@ function ModalLayout() {
               ),
               [MODAL_BODY_TYPES.EMPLOYEE_ADD_NEW]: (
                 <AddEmployeeModalBody
+                  closeModal={close}
+                  extraObject={extraObject}
+                />
+              ),
+              [MODAL_BODY_TYPES.ADD_ZONE_DETAILS]: (
+                <AddZoneDetailsModalBody
                   closeModal={close}
                   extraObject={extraObject}
                 />

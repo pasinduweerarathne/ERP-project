@@ -6,8 +6,8 @@ import InputText from "../../components/Input/InputText";
 
 function Login() {
   const INITIAL_LOGIN_OBJ = {
-    password: "pasindu1234",
-    emailId: "pasindu",
+    emailId: "admin",
+    password: "admin123",
   };
 
   const [loading, setLoading] = useState(false);

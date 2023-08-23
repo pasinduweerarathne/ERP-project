@@ -3,57 +3,57 @@ import { useDispatch } from "react-redux";
 import InputText from "../../../components/Input/InputText";
 import ErrorText from "../../../components/Typography/ErrorText";
 import { showNotification } from "../../common/headerSlice";
-import { addNewEmployee } from "../employeeSlice";
+import { addZoneDetails } from "../productSlice";
 
-const INITIAL_EMPLOYEE_OBJ = {
-  first_name: "",
-  last_name: "",
+const INITIAL_ZONE_DETAILS_OBJ = {
+  name: "",
+  description: "",
 };
 
-function AddEmployeeModalBody({ closeModal }) {
+function AddZoneDetailsModalBody({ closeModal }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [employeeObj, setEmployeeObj] = useState(INITIAL_EMPLOYEE_OBJ);
+  const [zoneDetailsObj, setEmployeeObj] = useState(INITIAL_ZONE_DETAILS_OBJ);
 
-  const saveNewEmployee = () => {
-    if (employeeObj.first_name.trim() === "")
+  const saveZoneDetails = () => {
+    if (zoneDetailsObj.name.trim() === "")
       return setErrorMessage("First Name is required!");
     else {
-      let newEmployeeObj = {
-        id: 7,
-        first_name: employeeObj.first_name,
-        last_name: employeeObj.last_name,
-        avatar: "https://reqres.in/img/faces/1-image.jpg",
+      let newZoneDetailsObj = {
+        name: zoneDetailsObj.name,
+        description: zoneDetailsObj.description,
+        type: "expense",
+        date: "1st Jan 2023",
       };
-      dispatch(addNewEmployee({ newEmployeeObj }));
-      dispatch(showNotification({ message: "New Employee Added!", status: 1 }));
+      dispatch(addZoneDetails({ newZoneDetailsObj }));
+      dispatch(showNotification({ message: "Zone details added!", status: 1 }));
       closeModal();
     }
   };
 
   const updateFormValue = ({ updateType, value }) => {
     setErrorMessage("");
-    setEmployeeObj({ ...employeeObj, [updateType]: value });
+    setEmployeeObj({ ...zoneDetailsObj, [updateType]: value });
   };
 
   return (
     <>
       <InputText
         type="text"
-        defaultValue={employeeObj.first_name}
-        updateType="first_name"
+        defaultValue={zoneDetailsObj.name}
+        updateType="name"
         containerStyle="mt-4"
-        labelTitle="First Name"
+        labelTitle="Name"
         updateFormValue={updateFormValue}
       />
 
       <InputText
         type="text"
-        defaultValue={employeeObj.last_name}
-        updateType="last_name"
+        defaultValue={zoneDetailsObj.description}
+        updateType="description"
         containerStyle="mt-4"
-        labelTitle="Last Name"
+        labelTitle="Description"
         updateFormValue={updateFormValue}
       />
 
@@ -64,7 +64,7 @@ function AddEmployeeModalBody({ closeModal }) {
         </button>
         <button
           className="btn btn-primary px-6"
-          onClick={() => saveNewEmployee()}
+          onClick={() => saveZoneDetails()}
         >
           Save
         </button>
@@ -73,4 +73,4 @@ function AddEmployeeModalBody({ closeModal }) {
   );
 }
 
-export default AddEmployeeModalBody;
+export default AddZoneDetailsModalBody;
