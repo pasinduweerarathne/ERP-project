@@ -4,11 +4,14 @@ function LandingIntro() {
       <div className="hero-content">
         <div className="max-w-md">
           <div className="text-center">
-            <img
+            {/* <img
               src="./intro.png"
               alt="Dashwind Admin Template"
               className="w-120 inline-block"
-            ></img>
+            ></img> */}
+            <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+              Golden Star State
+            </h1>
           </div>
         </div>
       </div>
