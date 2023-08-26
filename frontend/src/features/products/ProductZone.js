@@ -4,7 +4,10 @@ import { NavLink, useLocation, useParams } from "react-router-dom";
 import TitleCard from "../../components/Cards/TitleCard";
 import { ZONE_DATA } from "../../utils/dummyData";
 import { MODAL_BODY_TYPES } from "../../utils/globalConstantUtil";
+import { showNotification } from "../common/headerSlice";
 import { openModal } from "../common/modalSlice";
+import { deleteZoneDetails } from "./productSlice";
+import { TrashIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -35,7 +38,10 @@ const ProductZone = () => {
   const dispatch = useDispatch();
   const zoneData = useSelector((state) => state.product.zoneDetails);
 
-  const deleteZoneData = () => {};
+  const deleteZoneData = (id) => {
+    dispatch(deleteZoneDetails(id));
+    dispatch(showNotification({ message: "Zone details deleted!", status: 1 }));
+  };
 
   return (
     <>
@@ -97,8 +103,12 @@ const ProductZone = () => {
                   <td>{d.type}</td>
                   <td>{d.date}</td>
                   <td>
-                    <button>Edit</button>
-                    <button>Delete</button>
+                    <button className="mr-4 w-5 h-5">
+                      <PencilSquareIcon />
+                    </button>
+                    <button onClick={() => deleteZoneData(d.id)}>
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
                   </td>
                 </tr>
               ))}
