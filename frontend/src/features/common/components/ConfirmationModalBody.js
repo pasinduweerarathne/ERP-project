@@ -7,6 +7,7 @@ import {
 import { deleteLead } from "../../leads/leadSlice";
 import { showNotification } from "../headerSlice";
 import { deleteEmployee } from "../../employeeManagement/employeeSlice";
+import { deleteZoneDetails } from "../../products/productSlice";
 
 function ConfirmationModalBody({ extraObject, closeModal }) {
   const dispatch = useDispatch();
@@ -19,8 +20,12 @@ function ConfirmationModalBody({ extraObject, closeModal }) {
       dispatch(deleteLead({ index }));
       dispatch(showNotification({ message: toastMsg, status: 1 }));
     }
-    if (type ===CONFIRMATION_MODAL_CLOSE_TYPES.EMPLOYEE_DELETE){
+    if (type === CONFIRMATION_MODAL_CLOSE_TYPES.EMPLOYEE_DELETE) {
       dispatch(deleteEmployee({ index }));
+      dispatch(showNotification({ message: toastMsg, status: 1 }));
+    }
+    if (type === CONFIRMATION_MODAL_CLOSE_TYPES.ZONE_DETAILS_DELETE) {
+      dispatch(deleteZoneDetails(index));
       dispatch(showNotification({ message: toastMsg, status: 1 }));
     }
     closeModal();

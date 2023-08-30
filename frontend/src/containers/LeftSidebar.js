@@ -25,7 +25,7 @@ function LeftSidebar() {
         </button>
 
         <li className="mb-2 font-semibold text-xl">
-          <Link to={"/app/welcome"}>GOLD STAR STATE</Link>
+          <Link to={"/app/dashboard"}>GOLD STAR STATE</Link>
         </li>
         {routes.map((route, k) => {
           return (

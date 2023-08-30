@@ -13,7 +13,7 @@ const selectOptionValues = {
   resourse: ["Factory 1", "Factory 2"],
 };
 
-function AddZoneDetailsModalBody({ closeModal }) {
+function AddZoneDetailsModalBody({ closeModal, extraObject }) {
   const [type, setType] = useState("Expense");
   const [empName, setEmpName] = useState("");
   const [resource, setResource] = useState("");
@@ -27,6 +27,8 @@ function AddZoneDetailsModalBody({ closeModal }) {
     resource,
   });
   const data = useSelector((state) => state.product.zoneDetails);
+
+  // console.log(extraObject[0].name);
 
   useEffect(() => {
     setErrorMessage("");
@@ -77,7 +79,7 @@ function AddZoneDetailsModalBody({ closeModal }) {
   return (
     <>
       <SelectOption
-        value={type}
+        value={extraObject ? extraObject[0].type : type}
         setValue={setType}
         options={selectOptionValues.type}
         label="Expense / Income"
@@ -115,7 +117,7 @@ function AddZoneDetailsModalBody({ closeModal }) {
       {type === "Expense" && (
         <>
           <SelectOption
-            value={empName}
+            value={extraObject ? extraObject[0].name : empName}
             setValue={setEmpName}
             options={selectOptionValues.employeeList}
             label="Name"
@@ -123,7 +125,11 @@ function AddZoneDetailsModalBody({ closeModal }) {
 
           <TextAreaInput
             type="text"
-            defaultValue={zoneDetailsObj.description}
+            defaultValue={
+              extraObject
+                ? extraObject[0].description
+                : zoneDetailsObj.description
+            }
             updateType="description"
             containerStyle="mt-4"
             labelTitle="Description"

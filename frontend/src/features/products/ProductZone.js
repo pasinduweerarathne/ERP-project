@@ -3,16 +3,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import TitleCard from "../../components/Cards/TitleCard";
 import { ZONE_DATA } from "../../utils/dummyData";
-import { MODAL_BODY_TYPES } from "../../utils/globalConstantUtil";
+import {
+  CONFIRMATION_MODAL_CLOSE_TYPES,
+  MODAL_BODY_TYPES,
+} from "../../utils/globalConstantUtil";
 import { showNotification } from "../common/headerSlice";
 import { openModal } from "../common/modalSlice";
-import { deleteZoneDetails } from "./productSlice";
 import { TrashIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
 
-  const openModel = () => {
+  const open = () => {
     dispatch(
       openModal({
         title: "Add zone details",
@@ -23,10 +25,7 @@ const TopSideButtons = () => {
 
   return (
     <div className="inline-block float-right">
-      <button
-        className="btn px-6 btn-sm normal-case btn-primary"
-        onClick={() => openModel()}
-      >
+      <button className="btn btn-primary btn-sm ml-5" onClick={() => open()}>
         Add New
       </button>
     </div>
@@ -38,9 +37,30 @@ const ProductZone = () => {
   const dispatch = useDispatch();
   const zoneData = useSelector((state) => state.product.zoneDetails);
 
-  const deleteZoneData = (id) => {
-    dispatch(deleteZoneDetails(id));
-    dispatch(showNotification({ message: "Zone details deleted!", status: 1 }));
+  const deleteZoneDetails = (id) => {
+    dispatch(
+      openModal({
+        title: "Confirmation",
+        bodyType: MODAL_BODY_TYPES.CONFIRMATION,
+        extraObject: {
+          message: `Are you sure you want to delete this zone details?`,
+          type: CONFIRMATION_MODAL_CLOSE_TYPES.ZONE_DETAILS_DELETE,
+          index: id,
+          toastMsg: "Successfully Deleted!",
+        },
+      })
+    );
+  };
+
+  const editZoneDetails = (id) => {
+    const selectedData = zoneData.filter((z) => z.id === id);
+    dispatch(
+      openModal({
+        title: "Edit zone details",
+        bodyType: MODAL_BODY_TYPES.ADD_ZONE_DETAILS,
+        extraObject: selectedData,
+      })
+    );
   };
 
   return (
@@ -50,7 +70,7 @@ const ProductZone = () => {
           Zone {zone}
         </h1>
         <NavLink
-          className={"bg-primary rounded-2xl px-5 py-2 text-white"}
+          className={"btn btn-primary btn-sm ml-5"}
           to={`/app/products/${type}`}
         >
           Back
@@ -103,10 +123,13 @@ const ProductZone = () => {
                   <td>{d.type}</td>
                   <td>{d.date}</td>
                   <td>
-                    <button className="mr-4 w-5 h-5">
-                      <PencilSquareIcon />
+                    <button
+                      className="mr-4"
+                      onClick={() => editZoneDetails(d.id)}
+                    >
+                      <PencilSquareIcon className="w-5 h-5" />
                     </button>
-                    <button onClick={() => deleteZoneData(d.id)}>
+                    <button onClick={() => deleteZoneDetails(d.id)}>
                       <TrashIcon className="w-5 h-5" />
                     </button>
                   </td>
