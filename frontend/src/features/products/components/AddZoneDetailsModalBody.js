@@ -28,8 +28,6 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
   });
   const data = useSelector((state) => state.product.zoneDetails);
 
-  // console.log(extraObject[0].name);
-
   useEffect(() => {
     setErrorMessage("");
   }, [empName, type]);

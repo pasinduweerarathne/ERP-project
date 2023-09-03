@@ -47,6 +47,12 @@ function ModalLayout() {
                   extraObject={extraObject}
                 />
               ),
+              [MODAL_BODY_TYPES.EMPLOYEE_EDIT]: (
+                <AddEmployeeModalBody
+                  closeModal={close}
+                  extraObject={extraObject}
+                />
+              ),
               [MODAL_BODY_TYPES.ADD_ZONE_DETAILS]: (
                 <AddZoneDetailsModalBody
                   closeModal={close}

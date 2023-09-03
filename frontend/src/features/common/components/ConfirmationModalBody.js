@@ -21,11 +21,11 @@ function ConfirmationModalBody({ extraObject, closeModal }) {
       dispatch(showNotification({ message: toastMsg, status: 1 }));
     }
     if (type === CONFIRMATION_MODAL_CLOSE_TYPES.EMPLOYEE_DELETE) {
-      dispatch(deleteEmployee({ index }));
+      dispatch(deleteEmployee(_id));
       dispatch(showNotification({ message: toastMsg, status: 1 }));
     }
     if (type === CONFIRMATION_MODAL_CLOSE_TYPES.ZONE_DETAILS_DELETE) {
-      dispatch(deleteZoneDetails(index));
+      dispatch(deleteZoneDetails(_id));
       dispatch(showNotification({ message: toastMsg, status: 1 }));
     }
     closeModal();

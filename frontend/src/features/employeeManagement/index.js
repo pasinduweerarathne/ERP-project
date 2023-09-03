@@ -7,9 +7,10 @@ import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
 } from "../../utils/globalConstantUtil";
-import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
 import { showNotification } from "../common/headerSlice";
 import { CURRENT_EMPLOYEES } from "../../utils/dummyData";
+import { getEmployeesContent } from "./employeeSlice";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -37,9 +38,18 @@ const TopSideButtons = () => {
 
 function EmployeeManagement() {
   const dispatch = useDispatch();
-  const [employees, setEmployees] = useState(CURRENT_EMPLOYEES);
+  const fetchEmployees = useSelector((state) => state.employee.employees);
+  const [employees, setEmployees] = useState(fetchEmployees);
 
-  const deleteCurrentEmployee = (index, id) => {
+  useEffect(() => {
+    dispatch(getEmployeesContent());
+  }, []);
+
+  useEffect(() => {
+    setEmployees(fetchEmployees);
+  }, [fetchEmployees]);
+
+  const deleteEmployee = (id) => {
     dispatch(
       openModal({
         title: "Confirmation",
@@ -47,12 +57,23 @@ function EmployeeManagement() {
         extraObject: {
           message: `Are you sure you want to delete this employee?`,
           type: CONFIRMATION_MODAL_CLOSE_TYPES.EMPLOYEE_DELETE,
-          index,
+          _id: id,
           toastMsg: "Employee Deleted!",
         },
       })
     );
-    setEmployees(employees.filter((e) => e.id !== id));
+  };
+
+  const editEmployee = (id) => {
+    const selectedEmp = employees.filter((e) => e._id === id);
+
+    dispatch(
+      openModal({
+        title: "Edit Employee",
+        bodyType: MODAL_BODY_TYPES.EMPLOYEE_ADD_NEW,
+        extraObject: selectedEmp,
+      })
+    );
   };
 
   return (
@@ -67,42 +88,32 @@ function EmployeeManagement() {
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Created At</th>
+                <th>NIC</th>
+                <th>Address</th>
                 <th>Salary</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {employees.map((e, k) => {
+              {employees?.map((e) => {
                 return (
-                  <tr key={k}>
-                    <td>
-                      <div className="flex items-center space-x-3">
-                        <div className="avatar">
-                          <div className="mask mask-squircle w-12 h-12">
-                            <img src={e.avatar} alt="Avatar" />
-                          </div>
-                        </div>
-                        <div>
-                          <div className="font-bold">{e.first_name}</div>
-                          <div className="text-sm opacity-50">
-                            {e.last_name}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      {moment(new Date())
-                        .add(-5 * (k + 2), "days")
-                        .format("DD MMM YY")}
-                    </td>
+                  <tr key={e._id}>
+                    <td>{e.name}</td>
+                    <td>{e.nic}</td>
+                    <td>{e.address}</td>
                     <td>{e.salary}</td>
                     <td>
                       <button
                         className="btn btn-square btn-ghost"
-                        onClick={() => deleteCurrentEmployee(k, e.id)}
+                        onClick={() => deleteEmployee(e._id)}
                       >
                         <TrashIcon className="w-5" />
+                      </button>
+                      <button
+                        className="mr-4"
+                        onClick={() => editEmployee(e._id)}
+                      >
+                        <PencilSquareIcon className="w-5 h-5" />
                       </button>
                     </td>
                   </tr>

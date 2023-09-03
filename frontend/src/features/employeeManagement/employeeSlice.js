@@ -2,10 +2,47 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const getEmployeesContent = createAsyncThunk(
-  "/employees/content",
+  "/employees/fetchEmployees",
   async () => {
-    const response = await axios.get("/api/users?page=2", {});
+    const response = await axios.get(
+      "https://erp-demo-test.onrender.com/api/employees",
+      {}
+    );
     return response.data;
+  }
+);
+
+export const addEmployee = createAsyncThunk(
+  "/employees/addEmployee",
+  async ({ name, nic, address, salary }) => {
+    const res = await axios.post(
+      "https://erp-demo-test.onrender.com/api/employees",
+      { name, nic, address, salary }
+    );
+    return res.data;
+  }
+);
+
+export const editEmployee = createAsyncThunk(
+  "/employees/editEmployee",
+  async ({ name, nic, address, salary, _id }) => {
+    const res = await axios.patch(
+      `https://erp-demo-test.onrender.com/api/employees/${_id}`,
+      { name, nic, address, salary }
+    );
+
+    return res.data;
+  }
+);
+
+export const deleteEmployee = createAsyncThunk(
+  "/employees/deleteEmployee",
+  async (id) => {
+    const res = await axios.delete(
+      `https://erp-demo-test.onrender.com/api/employees/${id}`
+    );
+
+    return res.data;
   }
 );
 
@@ -16,32 +53,68 @@ export const employeeSlice = createSlice({
     employees: [],
   },
   reducers: {
-    addNewEmployee: (state, action) => {
-      let { newEmployeeObj } = action.payload;
-      state.employees = [...state.employees, newEmployeeObj];
-    },
-
-    deleteEmployee: (state, action) => {
-      let { index } = action.payload;
-      state.employees.splice(index, 1);
-    },
+    // addNewEmployee: (state, action) => {
+    //   let { newEmployeeObj } = action.payload;
+    //   state.employees = [...state.employees, newEmployeeObj];
+    // },
+    // deleteEmployee: (state, action) => {
+    //   let { index } = action.payload;
+    //   state.employees.splice(index, 1);
+    // },
   },
 
   extraReducers: {
+    // fetch data
     [getEmployeesContent.pending]: (state) => {
       state.isLoading = true;
     },
     [getEmployeesContent.fulfilled]: (state, action) => {
-      console.log(action.payload.data);
-      state.employees = action.payload.data;
+      state.employees = action.payload;
       state.isLoading = false;
     },
     [getEmployeesContent.rejected]: (state) => {
       state.isLoading = false;
     },
+    // add data
+    [addEmployee.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [addEmployee.fulfilled]: (state, action) => {
+      state.employees = [...state.employees, action.payload];
+      state.isLoading = false;
+    },
+    [addEmployee.rejected]: (state) => {
+      state.isLoading = false;
+    },
+    // update data
+    [editEmployee.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [editEmployee.fulfilled]: (state, action) => {
+      state.employees = state.employees.map((emp) =>
+        emp._id === action.payload._id ? action.payload : emp
+      );
+      state.isLoading = false;
+    },
+    [editEmployee.rejected]: (state) => {
+      state.isLoading = false;
+    },
+    // delete data
+    [deleteEmployee.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [deleteEmployee.fulfilled]: (state, action) => {
+      state.employees = state.employees.filter(
+        ({ _id }) => _id !== action.payload._id
+      );
+      state.isLoading = false;
+    },
+    [deleteEmployee.rejected]: (state) => {
+      state.isLoading = false;
+    },
   },
 });
 
-export const { addNewEmployee, deleteEmployee } = employeeSlice.actions;
+export const { addNewEmployee } = employeeSlice.actions;
 
 export default employeeSlice.reducer;

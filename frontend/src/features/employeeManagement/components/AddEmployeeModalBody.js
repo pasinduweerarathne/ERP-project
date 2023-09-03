@@ -1,34 +1,41 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import InputText from "../../../components/Input/InputText";
 import ErrorText from "../../../components/Typography/ErrorText";
 import { showNotification } from "../../common/headerSlice";
-import { addNewEmployee } from "../employeeSlice";
+import {
+  addEmployee,
+  addNewEmployee,
+  editEmployee,
+  getEmployeesContent,
+} from "../employeeSlice";
 
-const INITIAL_EMPLOYEE_OBJ = {
-  first_name: "",
-  last_name: "",
-};
-
-function AddEmployeeModalBody({ closeModal }) {
+function AddEmployeeModalBody({ closeModal, extraObject }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [employeeObj, setEmployeeObj] = useState(INITIAL_EMPLOYEE_OBJ);
+  const [employeeObj, setEmployeeObj] = useState({
+    name: extraObject ? extraObject[0].name : "",
+    nic: extraObject ? extraObject[0].nic : "",
+    address: extraObject ? extraObject[0].address : "",
+    salary: extraObject ? extraObject[0].salary : null,
+  });
 
   const saveNewEmployee = () => {
-    if (employeeObj.first_name.trim() === "")
+    if (employeeObj.name.trim() === "")
       return setErrorMessage("First Name is required!");
     else {
-      let newEmployeeObj = {
-        id: 7,
-        first_name: employeeObj.first_name,
-        last_name: employeeObj.last_name,
-        avatar: "https://reqres.in/img/faces/1-image.jpg",
-      };
-      dispatch(addNewEmployee({ newEmployeeObj }));
-      dispatch(showNotification({ message: "New Employee Added!", status: 1 }));
-      closeModal();
+      if (!extraObject) {
+        dispatch(addEmployee(employeeObj));
+        dispatch(
+          showNotification({ message: "New Employee Added!", status: 1 })
+        );
+        closeModal();
+      } else {
+        dispatch(editEmployee({ ...employeeObj, _id: extraObject[0]._id }));
+        dispatch(showNotification({ message: "Employee Updated!", status: 1 }));
+        closeModal();
+      }
     }
   };
 
@@ -41,19 +48,34 @@ function AddEmployeeModalBody({ closeModal }) {
     <>
       <InputText
         type="text"
-        defaultValue={employeeObj.first_name}
-        updateType="first_name"
+        defaultValue={employeeObj.name}
+        updateType="name"
         containerStyle="mt-4"
-        labelTitle="First Name"
+        labelTitle="Name"
         updateFormValue={updateFormValue}
       />
-
       <InputText
         type="text"
-        defaultValue={employeeObj.last_name}
-        updateType="last_name"
+        defaultValue={employeeObj.nic}
+        updateType="nic"
         containerStyle="mt-4"
-        labelTitle="Last Name"
+        labelTitle="NIC"
+        updateFormValue={updateFormValue}
+      />
+      <InputText
+        type="text"
+        defaultValue={employeeObj.address}
+        updateType="address"
+        containerStyle="mt-4"
+        labelTitle="Address"
+        updateFormValue={updateFormValue}
+      />
+      <InputText
+        type="number"
+        defaultValue={employeeObj.salary}
+        updateType="salary"
+        containerStyle="mt-4"
+        labelTitle="Salary"
         updateFormValue={updateFormValue}
       />
 
@@ -66,7 +88,7 @@ function AddEmployeeModalBody({ closeModal }) {
           className="btn btn-primary px-6"
           onClick={() => saveNewEmployee()}
         >
-          Save
+          {extraObject ? "Update" : "Save"}
         </button>
       </div>
     </>
