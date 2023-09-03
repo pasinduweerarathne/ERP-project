@@ -110,7 +110,7 @@ function EmployeeManagement() {
                         <TrashIcon className="w-5" />
                       </button>
                       <button
-                        className="mr-4"
+                        className="mr-4 btn btn-square btn-ghost"
                         onClick={() => editEmployee(e._id)}
                       >
                         <PencilSquareIcon className="w-5 h-5" />
