@@ -5,32 +5,43 @@ import SelectOption from "../../../components/Input/SelectOption";
 import TextAreaInput from "../../../components/Input/TextAreaInput";
 import ErrorText from "../../../components/Typography/ErrorText";
 import { showNotification } from "../../common/headerSlice";
-import { addZoneDetails } from "../productSlice";
+import { addZoneDetails, editZoneDetails } from "../productSlice";
 
 const selectOptionValues = {
-  type: ["Expense", "Income"],
-  employeeList: ["John", "Kamal", "Kalana", "Shown"],
+  type: [
+    { text: "Expense", value: "Expense" },
+    { text: "Income", value: "Income" },
+  ],
+  employeeList: [
+    { text: "Select", value: "" },
+    { text: "Pasindu", value: "Pasindu" },
+    { text: "John", value: "John" },
+    { text: "Kamal", value: "Kamal" },
+    { text: "Kalana", value: "Kalana" },
+    { text: "Shown", value: "Shown" },
+  ],
   resourse: ["Factory 1", "Factory 2"],
 };
 
 function AddZoneDetailsModalBody({ closeModal, extraObject }) {
-  const [type, setType] = useState("Expense");
-  const [empName, setEmpName] = useState("");
-  const [resource, setResource] = useState("");
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [zoneDetailsObj, setZoneDetailsObj] = useState({
-    description: "",
-    type,
-    empName,
-    resource,
+  const [formData, setFormData] = useState({
+    type: extraObject ? extraObject[0].type : "Expense",
+    description: extraObject ? extraObject[0].description : "",
+    empName: extraObject ? extraObject[0].empName : "",
+    resource: extraObject ? extraObject[0].resource : "",
   });
-  const data = useSelector((state) => state.product.zoneDetails);
+  const [formErrors, setFormErrors] = useState({
+    type: "",
+    description: "",
+    empName: "",
+    resource: "",
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  let hasErrors = false;
 
-  useEffect(() => {
-    setErrorMessage("");
-  }, [empName, type]);
+  const data = useSelector((state) => state.product.tea.zoneData);
 
   const saveZoneDetails = () => {
     const currentDate = new Date();
@@ -38,52 +49,61 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
     const month = String(currentDate.getMonth() + 1).padStart(2, "0");
     const day = String(currentDate.getDate()).padStart(2, "0");
     const formattedDate = `${month}/${day}/${year}`;
+    const newFormErrors = {};
 
-    if (type === "Expense") {
-      if (
-        empName !== "" &&
-        empName !== "--select--" &&
-        zoneDetailsObj.description !== ""
-      ) {
-        let newZoneDetailsObj = {
-          id: data.length + 1,
-          name: empName,
-          description: zoneDetailsObj.description,
-          type,
-          date: formattedDate,
-        };
-        dispatch(addZoneDetails({ newZoneDetailsObj }));
-        dispatch(
-          showNotification({ message: "Zone details added!", status: 1 })
-        );
-        closeModal();
-      } else {
-        if (empName === "" || empName === "--select--") {
-          return setErrorMessage("Employee name is empty!");
-        } else if (zoneDetailsObj.description === "") {
-          return setErrorMessage("Description is empty!");
+    if (formData.empName.trim() === "") {
+      newFormErrors.empName = "Name is required";
+      hasErrors = true;
+    }
+    if (formData.description.trim() === "") {
+      newFormErrors.description = "Description is required";
+      hasErrors = true;
+    }
+
+    // Update errors and handle form submission
+    if (hasErrors) {
+      setFormErrors(newFormErrors);
+    } else {
+      if (formData.type === "Expense") {
+        if (!extraObject) {
+          dispatch(addZoneDetails({ ...formData, date: formattedDate }));
+          dispatch(
+            showNotification({ message: "Zone details added!", status: 1 })
+          );
+          closeModal();
+        } else {
+          dispatch(editZoneDetails(formData));
+          dispatch(
+            showNotification({ message: "Zone details Updated!", status: 1 })
+          );
+          closeModal();
         }
       }
-    } else {
-      if (type === "--select--") return setErrorMessage("Select a type");
     }
   };
 
   const updateFormValue = ({ updateType, value }) => {
-    setErrorMessage("");
-    setZoneDetailsObj({ ...zoneDetailsObj, [updateType]: value });
+    if (updateType === "empName") {
+      setFormErrors({ ...formErrors, empName: "" });
+    }
+    if (updateType === "description") {
+      setFormErrors({ ...formErrors, description: "" });
+    }
+    setFormData({ ...formData, [updateType]: value });
   };
 
   return (
     <>
       <SelectOption
-        value={extraObject ? extraObject[0].type : type}
-        setValue={setType}
-        options={selectOptionValues.type}
         label="Expense / Income"
+        id="type"
+        defaultValue={formData.type}
+        options={selectOptionValues.type}
+        updateFormValue={updateFormValue}
+        updateType="type"
       />
 
-      {type === "Income" && (
+      {/* {type === "Income" && (
         <>
           <SelectOption
             value={resource}
@@ -110,33 +130,32 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
             updateFormValue={updateFormValue}
           />
         </>
-      )}
+      )} */}
 
-      {type === "Expense" && (
+      {formData.type === "Expense" && (
         <>
           <SelectOption
-            value={extraObject ? extraObject[0].name : empName}
-            setValue={setEmpName}
+            label="Employee Name"
+            id="empName"
+            defaultValue={formData.empName}
             options={selectOptionValues.employeeList}
-            label="Name"
+            updateFormValue={updateFormValue}
+            updateType="empName"
           />
+          <ErrorText styleClass="mt-5">{formErrors.empName}</ErrorText>
 
           <TextAreaInput
             type="text"
-            defaultValue={
-              extraObject
-                ? extraObject[0].description
-                : zoneDetailsObj.description
-            }
+            defaultValue={formData.description}
             updateType="description"
             containerStyle="mt-4"
             labelTitle="Description"
             updateFormValue={updateFormValue}
           />
+          <ErrorText styleClass="mt-5">{formErrors.description}</ErrorText>
         </>
       )}
 
-      <ErrorText styleClass="mt-16">{errorMessage}</ErrorText>
       <div className="modal-action">
         <button className="btn btn-ghost" onClick={() => closeModal()}>
           Cancel

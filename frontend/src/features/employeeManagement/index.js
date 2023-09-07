@@ -7,8 +7,6 @@ import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
 } from "../../utils/globalConstantUtil";
-import { showNotification } from "../common/headerSlice";
-import { CURRENT_EMPLOYEES } from "../../utils/dummyData";
 import { getEmployeesContent } from "./employeeSlice";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 
@@ -79,48 +77,54 @@ function EmployeeManagement() {
   return (
     <>
       <TitleCard
-        title="Current Employee"
+        title="Current Employees"
         topMargin="mt-2"
         TopSideButtons={<TopSideButtons />}
       >
         <div className="overflow-x-auto w-full">
-          <table className="table w-full">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>NIC</th>
-                <th>Address</th>
-                <th>Salary</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {employees?.map((e) => {
-                return (
-                  <tr key={e._id}>
-                    <td>{e.name}</td>
-                    <td>{e.nic}</td>
-                    <td>{e.address}</td>
-                    <td>{e.salary}</td>
-                    <td>
-                      <button
-                        className="btn btn-square btn-ghost"
-                        onClick={() => deleteEmployee(e._id)}
-                      >
-                        <TrashIcon className="w-5" />
-                      </button>
-                      <button
-                        className="mr-4 btn btn-square btn-ghost"
-                        onClick={() => editEmployee(e._id)}
-                      >
-                        <PencilSquareIcon className="w-5 h-5" />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          {employees.length === 0 ? (
+            <h1 className="font-semibold text-center">
+              No data available, Please add an employee
+            </h1>
+          ) : (
+            <table className="table w-full">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>NIC</th>
+                  <th>Address</th>
+                  <th>Salary</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {employees?.map((e) => {
+                  return (
+                    <tr key={e._id}>
+                      <td>{e.name}</td>
+                      <td>{e.nic}</td>
+                      <td>{e.address}</td>
+                      <td>{e.salary}</td>
+                      <td>
+                        <button
+                          className="btn btn-square btn-ghost"
+                          onClick={() => deleteEmployee(e._id)}
+                        >
+                          <TrashIcon className="w-5" />
+                        </button>
+                        <button
+                          className="mr-4 btn btn-square btn-ghost"
+                          onClick={() => editEmployee(e._id)}
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
         </div>
       </TitleCard>
     </>

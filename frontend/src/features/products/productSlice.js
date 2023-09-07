@@ -3,21 +3,21 @@ import { createSlice } from "@reduxjs/toolkit";
 const zoneData = [
   {
     id: 1,
-    name: "pasindu",
+    empName: "Pasindu",
     description: "test",
     type: "Expense",
     date: "1st jan 2023",
   },
   {
     id: 2,
-    name: "kamal",
+    empName: "Kamal",
     description: "test",
     type: "Expense",
     date: "1st jan 2023",
   },
   {
     id: 3,
-    name: "john",
+    empName: "John",
     description: "test",
     type: "Expense",
     date: "1st jan 2023",
@@ -28,23 +28,28 @@ export const productSlice = createSlice({
   name: "products",
   initialState: {
     isLoading: false,
-    tea: [],
+    tea: { zoneData },
     coconut: [],
     cinemon: [],
-    zoneDetails: zoneData,
   },
   reducers: {
     addZoneDetails: (state, action) => {
-      let { newZoneDetailsObj } = action.payload;
-      state.zoneDetails = [...state.zoneDetails, newZoneDetailsObj];
+      state.tea.zoneData = [...state.tea.zoneData, action.payload];
     },
     deleteZoneDetails: (state, action) => {
-      const id = action.payload;
-      state.zoneDetails = state.zoneDetails.filter((data) => data.id !== id);
+      state.tea.zoneData = state.tea.zoneData.filter(
+        (data) => data.id !== action.payload
+      );
+    },
+    editZoneDetails: (state, action) => {
+      state.tea.zoneData = state.tea.zoneData.map((data) =>
+        data.id === action.payload.id ? action.payload : data
+      );
     },
   },
 });
 
-export const { addZoneDetails, deleteZoneDetails } = productSlice.actions;
+export const { addZoneDetails, deleteZoneDetails, editZoneDetails } =
+  productSlice.actions;
 
 export default productSlice.reducer;

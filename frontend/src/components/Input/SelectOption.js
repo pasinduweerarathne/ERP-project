@@ -1,24 +1,34 @@
 import React, { useState } from "react";
 
-const SelectOption = ({ value, setValue, options, label }) => {
-  const handleChange = (e) => {
-    setValue(e.target.value);
+const SelectOption = ({
+  label,
+  id,
+  defaultValue,
+  options,
+  updateType,
+  updateFormValue,
+}) => {
+  const [value, setValue] = useState(defaultValue);
+
+  const updateInputValue = (val) => {
+    setValue(val);
+    updateFormValue({ updateType, value: val });
   };
 
   return (
     <div className={`form-control w-full mt-4`}>
-      <label className="label">
+      <label htmlFor={id} className="label">
         <span className={"label-text text-base-content"}>{label}</span>
       </label>
 
       <select
+        id={id}
         className="input input-bordered w-full "
         value={value}
-        onChange={handleChange}
+        onChange={(e) => updateInputValue(e.target.value)}
       >
-        <option>--select--</option>
-        {options?.map((o) => (
-          <option value={o}>{o}</option>
+        {options?.map((emp) => (
+          <option value={emp.value}>{emp.text}</option>
         ))}
       </select>
     </div>

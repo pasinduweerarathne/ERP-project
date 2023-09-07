@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import TitleCard from "../../components/Cards/TitleCard";
@@ -35,7 +35,12 @@ const TopSideButtons = () => {
 const ProductZone = () => {
   const { zone, type } = useParams();
   const dispatch = useDispatch();
-  const zoneData = useSelector((state) => state.product.zoneDetails);
+  const zoneData = useSelector((state) => state.product.tea.zoneData);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    setData(zoneData);
+  }, [zoneData]);
 
   const deleteZoneDetails = (id) => {
     dispatch(
@@ -45,7 +50,7 @@ const ProductZone = () => {
         extraObject: {
           message: `Are you sure you want to delete this zone details?`,
           type: CONFIRMATION_MODAL_CLOSE_TYPES.ZONE_DETAILS_DELETE,
-          index: id,
+          _id: id,
           toastMsg: "Successfully Deleted!",
         },
       })
@@ -54,6 +59,7 @@ const ProductZone = () => {
 
   const editZoneDetails = (id) => {
     const selectedData = zoneData.filter((z) => z.id === id);
+
     dispatch(
       openModal({
         title: "Edit zone details",
@@ -108,7 +114,7 @@ const ProductZone = () => {
           <table className="table w-full">
             <thead>
               <tr>
-                <th>Category</th>
+                <th>Name</th>
                 <th>Description</th>
                 <th>Expense / Income</th>
                 <th>Date</th>
@@ -116,9 +122,9 @@ const ProductZone = () => {
               </tr>
             </thead>
             <tbody>
-              {zoneData?.map((d, i) => (
+              {data?.map((d, i) => (
                 <tr key={i}>
-                  <td>{d.name}</td>
+                  <td>{d.empName}</td>
                   <td>{d.description}</td>
                   <td>{d.type}</td>
                   <td>{d.date}</td>

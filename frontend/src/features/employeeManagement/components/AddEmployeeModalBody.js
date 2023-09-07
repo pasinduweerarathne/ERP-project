@@ -13,18 +13,47 @@ import {
 function AddEmployeeModalBody({ closeModal, extraObject }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const [employeeObj, setEmployeeObj] = useState({
     name: extraObject ? extraObject[0].name : "",
     nic: extraObject ? extraObject[0].nic : "",
     address: extraObject ? extraObject[0].address : "",
-    salary: extraObject ? extraObject[0].salary : null,
+    salary: extraObject ? extraObject[0].salary : "",
   });
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+    nic: "",
+    address: "",
+    salary: "",
+  });
+  let hasErrors = false;
 
   const saveNewEmployee = () => {
-    if (employeeObj.name.trim() === "")
-      return setErrorMessage("First Name is required!");
-    else {
+    const newFormErrors = {};
+
+    if (employeeObj.name.trim() === "") {
+      newFormErrors.name = "Name is required";
+      hasErrors = true;
+    }
+    if (employeeObj.nic.trim() === "") {
+      newFormErrors.nic = "NIC is required";
+      hasErrors = true;
+    }
+    if (employeeObj.address.trim() === "") {
+      newFormErrors.address = "Address is required";
+      hasErrors = true;
+    }
+    if (employeeObj.salary.trim() === "") {
+      newFormErrors.salary = "Salary is required";
+      hasErrors = true;
+    } else if (isNaN(employeeObj.salary)) {
+      newFormErrors.age = "Salary must be a number";
+      hasErrors = true;
+    }
+
+    // Update errors and handle form submission
+    if (hasErrors) {
+      setFormErrors(newFormErrors);
+    } else {
       if (!extraObject) {
         dispatch(addEmployee(employeeObj));
         dispatch(
@@ -40,7 +69,18 @@ function AddEmployeeModalBody({ closeModal, extraObject }) {
   };
 
   const updateFormValue = ({ updateType, value }) => {
-    setErrorMessage("");
+    if (updateType === "name") {
+      setFormErrors({ ...formErrors, name: "" });
+    }
+    if (updateType === "nic") {
+      setFormErrors({ ...formErrors, nic: "" });
+    }
+    if (updateType === "address") {
+      setFormErrors({ ...formErrors, address: "" });
+    }
+    if (updateType === "salary") {
+      setFormErrors({ ...formErrors, salary: "" });
+    }
     setEmployeeObj({ ...employeeObj, [updateType]: value });
   };
 
@@ -54,6 +94,7 @@ function AddEmployeeModalBody({ closeModal, extraObject }) {
         labelTitle="Name"
         updateFormValue={updateFormValue}
       />
+      <ErrorText styleClass="mt-5">{formErrors.name}</ErrorText>
       <InputText
         type="text"
         defaultValue={employeeObj.nic}
@@ -62,6 +103,7 @@ function AddEmployeeModalBody({ closeModal, extraObject }) {
         labelTitle="NIC"
         updateFormValue={updateFormValue}
       />
+      <ErrorText styleClass="mt-5">{formErrors.nic}</ErrorText>
       <InputText
         type="text"
         defaultValue={employeeObj.address}
@@ -70,6 +112,7 @@ function AddEmployeeModalBody({ closeModal, extraObject }) {
         labelTitle="Address"
         updateFormValue={updateFormValue}
       />
+      <ErrorText styleClass="mt-5">{formErrors.address}</ErrorText>
       <InputText
         type="number"
         defaultValue={employeeObj.salary}
@@ -78,8 +121,8 @@ function AddEmployeeModalBody({ closeModal, extraObject }) {
         labelTitle="Salary"
         updateFormValue={updateFormValue}
       />
+      <ErrorText styleClass="mt-5">{formErrors.salary}</ErrorText>
 
-      <ErrorText styleClass="mt-16">{errorMessage}</ErrorText>
       <div className="modal-action">
         <button className="btn btn-ghost" onClick={() => closeModal()}>
           Cancel
