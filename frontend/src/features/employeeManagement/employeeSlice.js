@@ -4,10 +4,7 @@ import axios from "axios";
 export const getEmployeesContent = createAsyncThunk(
   "/employees/fetchEmployees",
   async () => {
-    const response = await axios.get(
-      "https://erp-demo-test.onrender.com/api/employees",
-      {}
-    );
+    const response = await axios.get("http://localhost:4000/api/employees", {});
     return response.data;
   }
 );
@@ -15,10 +12,12 @@ export const getEmployeesContent = createAsyncThunk(
 export const addEmployee = createAsyncThunk(
   "/employees/addEmployee",
   async ({ name, nic, address, salary }) => {
-    const res = await axios.post(
-      "https://erp-demo-test.onrender.com/api/employees",
-      { name, nic, address, salary }
-    );
+    const res = await axios.post("http://localhost:4000/api/employees", {
+      name,
+      nic,
+      address,
+      salary,
+    });
     return res.data;
   }
 );
@@ -27,7 +26,7 @@ export const editEmployee = createAsyncThunk(
   "/employees/editEmployee",
   async ({ name, nic, address, salary, _id }) => {
     const res = await axios.patch(
-      `https://erp-demo-test.onrender.com/api/employees/${_id}`,
+      `http://localhost:4000/api/employees/${_id}`,
       { name, nic, address, salary }
     );
 
@@ -38,9 +37,7 @@ export const editEmployee = createAsyncThunk(
 export const deleteEmployee = createAsyncThunk(
   "/employees/deleteEmployee",
   async (id) => {
-    const res = await axios.delete(
-      `https://erp-demo-test.onrender.com/api/employees/${id}`
-    );
+    const res = await axios.delete(`http://localhost:4000/api/employees/${id}`);
 
     return res.data;
   }
@@ -52,17 +49,7 @@ export const employeeSlice = createSlice({
     isLoading: false,
     employees: [],
   },
-  reducers: {
-    // addNewEmployee: (state, action) => {
-    //   let { newEmployeeObj } = action.payload;
-    //   state.employees = [...state.employees, newEmployeeObj];
-    // },
-    // deleteEmployee: (state, action) => {
-    //   let { index } = action.payload;
-    //   state.employees.splice(index, 1);
-    // },
-  },
-
+  reducers: {},
   extraReducers: {
     // fetch data
     [getEmployeesContent.pending]: (state) => {

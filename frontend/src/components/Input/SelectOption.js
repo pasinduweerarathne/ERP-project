@@ -27,6 +27,7 @@ const SelectOption = ({
         value={value}
         onChange={(e) => updateInputValue(e.target.value)}
       >
+        <option value=""></option>
         {options?.map((emp) => (
           <option value={emp.value}>{emp.text}</option>
         ))}

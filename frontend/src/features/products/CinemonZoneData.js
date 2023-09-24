@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useLocation, useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import TitleCard from "../../components/Cards/TitleCard";
-import { ZONE_DATA } from "../../utils/dummyData";
 import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
 } from "../../utils/globalConstantUtil";
-import { showNotification } from "../common/headerSlice";
 import { openModal } from "../common/modalSlice";
-import { TrashIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import Table from "./components/Table";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -32,15 +30,29 @@ const TopSideButtons = () => {
   );
 };
 
-const ProductZone = () => {
+const CinemonZoneData = () => {
   const { zone, type } = useParams();
   const dispatch = useDispatch();
-  const zoneData = useSelector((state) => state.product.tea.zoneData);
+  const zoneData = useSelector((state) => state.product.tea);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     setData(zoneData);
   }, [zoneData]);
+
+  // expenses calculate
+  const filteredExensesData = data.filter((data) => data.type === "Expense");
+  const expensesArray = filteredExensesData.map((data) => data.salary);
+  const totalExpenses = expensesArray.reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0);
+
+  // income calculate
+  const filteredIncomeData = data.filter((data) => data.type === "Income");
+  const incomeArray = filteredIncomeData.map((data) => Number(data.amount));
+  const totalIncome = incomeArray.reduce((accumulator, currentValue) => {
+    return accumulator + currentValue;
+  }, 0);
 
   const deleteZoneDetails = (id) => {
     dispatch(
@@ -84,22 +96,24 @@ const ProductZone = () => {
       </div>
 
       <div className="grid lg:grid-cols-3 mt-4 md:grid-cols-2 grid-cols-1 gap-6">
-        <div className="stats shadow p-5">
-          <div className="flex items-center justify-around">
-            <div className={`text-2xl dark:text-slate-300`}>Income</div>
-            <div className="mt-[8px]">20000</div>
+        <div className="stats shadow p-4">
+          <div className="text-center">
+            <div className={`text-2xl dark:text-slate-300`}>Total Income:</div>
+            <div className="text-2xl">{totalIncome}</div>
           </div>
         </div>
-        <div className="stats shadow p-5">
-          <div className="flex items-center justify-around">
-            <div className={`text-2xl dark:text-slate-300`}>Expense</div>
-            <div className="mt-[8px]">20000</div>
+        <div className="stats shadow p-4">
+          <div className="text-center">
+            <div className={`text-2xl dark:text-slate-300`}>Total Expense:</div>
+            <div className="text-2xl">{totalExpenses}</div>
           </div>
         </div>
-        <div className="stats shadow p-5">
-          <div className="flex items-center justify-around">
-            <div className={`text-2xl dark:text-slate-300`}>Profit</div>
-            <div className="mt-[8px]">20000</div>
+        <div className="stats shadow p-4">
+          <div className="text-center">
+            <div className={`text-2xl dark:text-slate-300`}>
+              Total Net Income(Profit):
+            </div>
+            <div className="text-2xl">{totalIncome - totalExpenses}</div>
           </div>
         </div>
       </div>
@@ -110,43 +124,30 @@ const ProductZone = () => {
         topMargin="mt-2"
         TopSideButtons={<TopSideButtons />}
       >
-        <div className="overflow-x-auto w-full">
-          <table className="table w-full">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Expense / Income</th>
-                <th>Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data?.map((d, i) => (
-                <tr key={i}>
-                  <td>{d.empName}</td>
-                  <td>{d.description}</td>
-                  <td>{d.type}</td>
-                  <td>{d.date}</td>
-                  <td>
-                    <button
-                      className="mr-4"
-                      onClick={() => editZoneDetails(d.id)}
-                    >
-                      <PencilSquareIcon className="w-5 h-5" />
-                    </button>
-                    <button onClick={() => deleteZoneDetails(d.id)}>
-                      <TrashIcon className="w-5 h-5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {!data.length ? (
+          <h1 className="font-semibold text-center">
+            No data available, Please add one
+          </h1>
+        ) : (
+          <div className="overflow-x-auto w-full">
+            <Table
+              tableHeader={[
+                "name",
+                "description",
+                "expense/income",
+                "amount",
+                "date",
+                "actions",
+              ]}
+              tableBody={data}
+              editData={editZoneDetails}
+              deleteData={deleteZoneDetails}
+            />
+          </div>
+        )}
       </TitleCard>
     </>
   );
 };
 
-export default ProductZone;
+export default CinemonZoneData;

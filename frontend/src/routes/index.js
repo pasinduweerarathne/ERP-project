@@ -19,24 +19,24 @@ const ProfileSettings = lazy(() =>
 const GettingStarted = lazy(() => import("../pages/GettingStarted"));
 const DocFeatures = lazy(() => import("../pages/DocFeatures"));
 const DocComponents = lazy(() => import("../pages/DocComponents"));
-const Products = lazy(() => import("../pages/protected/Products"));
-const SingleProduct = lazy(() => import("../pages/protected/ProductZone"));
+const Zones = lazy(() => import("../pages/protected/Zones"));
+const SingleProduct = lazy(() => import("../pages/protected/SectionData"));
 const EmployeeManagement = lazy(() =>
   import("../pages/protected/EmployeeManagement")
 );
 const SalaryManagement = lazy(() =>
   import("../pages/protected/SalaryManagement")
 );
-const ProductCategory = lazy(() =>
-  import("../pages/protected/ProductCategory")
+const ProductCategories = lazy(() =>
+  import("../pages/protected/ProductCategories")
 );
-const ProductZone = lazy(() => import("../pages/protected/ProductZone"));
+const SectionData = lazy(() => import("../pages/protected/SectionData"));
 
 const routes = [
   { path: "/dashboard", component: Dashboard },
   { path: "/employee-management", component: EmployeeManagement },
   { path: "/salary-management", component: SalaryManagement },
-  { path: "/products", component: Products },
+  { path: "/zones", component: Zones },
   { path: "/product", component: SingleProduct },
   // { path: "/welcome", component: Welcome },
   { path: "/leads", component: Leads },
@@ -52,8 +52,8 @@ const routes = [
   { path: "/charts", component: Charts },
   { path: "/404", component: Page404 },
   { path: "/blank", component: Blank },
-  { path: "/products/:type", component: ProductCategory },
-  { path: "/products/:type/:zone", component: ProductZone },
+  { path: "/zones/:zone", component: ProductCategories },
+  { path: "/zones/:zone/:section", component: SectionData },
 ];
 
 export default routes;

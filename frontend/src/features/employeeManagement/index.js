@@ -9,6 +9,7 @@ import {
 } from "../../utils/globalConstantUtil";
 import { getEmployeesContent } from "./employeeSlice";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import Table from "./components/Table";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -37,7 +38,7 @@ const TopSideButtons = () => {
 function EmployeeManagement() {
   const dispatch = useDispatch();
   const fetchEmployees = useSelector((state) => state.employee.employees);
-  const [employees, setEmployees] = useState(fetchEmployees);
+  const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
     dispatch(getEmployeesContent());
@@ -87,43 +88,13 @@ function EmployeeManagement() {
               No data available, Please add an employee
             </h1>
           ) : (
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>NIC</th>
-                  <th>Address</th>
-                  <th>Salary</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {employees?.map((e) => {
-                  return (
-                    <tr key={e._id}>
-                      <td>{e.name}</td>
-                      <td>{e.nic}</td>
-                      <td>{e.address}</td>
-                      <td>{e.salary}</td>
-                      <td>
-                        <button
-                          className="btn btn-square btn-ghost"
-                          onClick={() => deleteEmployee(e._id)}
-                        >
-                          <TrashIcon className="w-5" />
-                        </button>
-                        <button
-                          className="mr-4 btn btn-square btn-ghost"
-                          onClick={() => editEmployee(e._id)}
-                        >
-                          <PencilSquareIcon className="w-5 h-5" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <Table
+              tableHeader={["Name", "Nic", "Address", "Salary", "Actions"]}
+              tableBody={employees}
+              editEmp={editEmployee}
+              deleteEmp={deleteEmployee}
+              showAction={true}
+            />
           )}
         </div>
       </TitleCard>

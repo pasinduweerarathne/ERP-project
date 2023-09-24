@@ -12,20 +12,20 @@ import { deleteZoneDetails } from "../../products/productSlice";
 function ConfirmationModalBody({ extraObject, closeModal }) {
   const dispatch = useDispatch();
 
-  const { message, type, _id, index, toastMsg } = extraObject;
+  const { message, type, _id, index, toastMsg, zone, product } = extraObject;
 
   const proceedWithYes = async () => {
-    if (type === CONFIRMATION_MODAL_CLOSE_TYPES.LEAD_DELETE) {
-      // positive response, call api or dispatch redux function
-      dispatch(deleteLead({ index }));
-      dispatch(showNotification({ message: toastMsg, status: 1 }));
-    }
+    // if (type === CONFIRMATION_MODAL_CLOSE_TYPES.LEAD_DELETE) {
+    //   // positive response, call api or dispatch redux function
+    //   dispatch(deleteLead({ index }));
+    //   dispatch(showNotification({ message: toastMsg, status: 1 }));
+    // }
     if (type === CONFIRMATION_MODAL_CLOSE_TYPES.EMPLOYEE_DELETE) {
       dispatch(deleteEmployee(_id));
       dispatch(showNotification({ message: toastMsg, status: 1 }));
     }
     if (type === CONFIRMATION_MODAL_CLOSE_TYPES.ZONE_DETAILS_DELETE) {
-      dispatch(deleteZoneDetails(_id));
+      dispatch(deleteZoneDetails({ _id, zone, product }));
       dispatch(showNotification({ message: toastMsg, status: 1 }));
     }
     closeModal();

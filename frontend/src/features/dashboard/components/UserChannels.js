@@ -1,38 +1,27 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import TitleCard from "../../../components/Cards/TitleCard";
-
-const userSourceData = [
-  { source: "Tea", count: "26,345", conversionPercent: 10.2 },
-  { source: "Conconut", count: "21,341", conversionPercent: 11.7 },
-  { source: "Cinemon ", count: "34,379", conversionPercent: 12.4 },
-];
+import Table from "../../employeeManagement/components/Table";
+import { getEmployeesContent } from "../../employeeManagement/employeeSlice";
 
 function UserChannels() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getEmployeesContent());
+  }, []);
+
+  const employees = useSelector((state) => state.employee.employees);
+
   return (
     <TitleCard title={"Available Employees"}>
       {/** Table Data */}
       <div className="overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th></th>
-              <th className="normal-case">Name</th>
-              <th className="normal-case">NIC</th>
-              <th className="normal-case">Address</th>
-            </tr>
-          </thead>
-          <tbody>
-            {userSourceData.map((u, k) => {
-              return (
-                <tr key={k}>
-                  <th>{k + 1}</th>
-                  <td>{u.source}</td>
-                  <td>{u.count}</td>
-                  <td>{`${u.conversionPercent}%`}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <Table
+          tableHeader={["Name", "Nic", "Address", "Salary", "Actions"]}
+          tableBody={employees}
+          showAction={false}
+        />
       </div>
     </TitleCard>
   );

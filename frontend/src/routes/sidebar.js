@@ -34,9 +34,9 @@ const routes = [
     name: "Dashboard",
   },
   {
-    path: "/app/products",
+    path: "/app/zones",
     icon: <ListBulletIcon className={iconClasses} />,
-    name: "Products",
+    name: "Zones",
   },
   {
     path: "/app/employee-management",
