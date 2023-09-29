@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import InputText from "../../../components/Input/InputText";
 import SelectOption from "../../../components/Input/SelectOption";
 import TextAreaInput from "../../../components/Input/TextAreaInput";
 import ErrorText from "../../../components/Typography/ErrorText";
 import { showNotification } from "../../common/headerSlice";
 import { getEmployeesContent } from "../../employeeManagement/employeeSlice";
-import { addZoneDetails, editZoneDetails } from "../productSlice";
+import { fetchZones } from "../productSlice";
 
 function convertString(str) {
   return str
@@ -19,7 +19,7 @@ function convertString(str) {
 function AddZoneDetailsModalBody({ closeModal, extraObject }) {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    id: extraObject ? extraObject[0].id : null,
+    id: extraObject ? extraObject[0]._id : null,
     type: extraObject ? extraObject[0].type : "Expense",
     description: extraObject ? extraObject[0].description : "",
     empName: extraObject ? extraObject[0].empName : "",
@@ -38,20 +38,24 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
 
   const zoneSlug = pathname.split("/")[3];
   const section = pathname.split("/")[4];
-  const productName = convertString(section);
+  const category = convertString(section);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getEmployeesContent());
-  }, []);
+    if (!zones.length) dispatch(fetchZones());
+  }, [dispatch]);
+
+  const zones = useSelector((state) => state.product.zones);
+  const zone = useSelector((state) =>
+    state.product.zones.find((z) => z.name === zoneSlug)
+  );
 
   const employeesList = useSelector((state) => state.employee.employees);
-  const zones = useSelector((state) => state.product.zones);
-  const zoneData = zones?.filter((state) => state.zoneSlug === zoneSlug);
-  const sectionDetails = zoneData[0]?.details;
-  const detailsObjArr = sectionDetails?.filter(
-    (state) => state.productName === productName
+  const x = useSelector((state) =>
+    state.product.zoneDetails.filter((z) => z.zoneSlug === zoneSlug)
   );
-  const details = detailsObjArr[0]?.data;
+  const arrLen = x[0].data[category];
 
   const empNames = employeesList.map((empName) => {
     return { text: empName.name, value: empName.name };
@@ -72,6 +76,74 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
       { text: "Factory 2", value: "Factory 2" },
     ],
   };
+
+  function addZoneDetails(formData) {
+    const { zoneSlug, categoryName, zoneId, data } = formData;
+    const { empName, type, description, salary } = data;
+    const body = {
+      zoneSlug,
+      categoryName,
+      zoneId,
+      empName,
+      type,
+      description,
+      salary,
+    };
+    fetch("http://localhost:4000/api/expenses", {
+      method: "POST",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.href = `/app/zones/${zoneSlug}/${categoryName}`;
+        } else {
+          throw new Error("Network response was not ok");
+        }
+      })
+      .catch((error) => {
+        console.error("Fetch Error:", error);
+      });
+  }
+
+  function editZoneDetails(formData) {
+    const { zoneSlug, categoryName, id, data } = formData;
+    const { empName, description, type, salary } = data;
+    const body = {
+      zoneSlug,
+      categoryName,
+      id,
+      empName,
+      description,
+      type,
+      salary,
+    };
+    fetch(`http://localhost:4000/api/expenses/${id}`, {
+      method: "PATCH",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.href = `/app/zones/${zoneSlug}/new-tea`;
+        } else {
+          throw new Error("Network response was not ok");
+        }
+      })
+      .catch((error) => {
+        console.error("Fetch Error:", error);
+      });
+  }
 
   const saveZoneDetails = () => {
     const currentDate = new Date();
@@ -117,21 +189,21 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
       setFormErrors(newFormErrors);
     } else {
       if (formData.type === "Expense") {
-        const { empName, description, type } = formData;
-        const payloadData = {
-          zoneSlug,
-          productName,
-          data: {
-            empName,
-            description,
-            type,
-            id: details?.length === undefined ? 1 : details?.length + 1,
-            date: formattedDate,
-            salary: getSalary[0].salary,
-          },
-        };
         if (!extraObject) {
-          dispatch(addZoneDetails(payloadData));
+          const { empName, description, type } = formData;
+          const payloadData = {
+            zoneSlug,
+            categoryName: category,
+            zoneId: zone._id,
+            data: {
+              empName,
+              description,
+              type,
+              date: formattedDate,
+              salary: getSalary[0].salary,
+            },
+          };
+          addZoneDetails(payloadData);
           dispatch(
             showNotification({ message: "Zone details added!", status: 1 })
           );
@@ -140,17 +212,17 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
           const { empName, description, type, id } = formData;
           const payloadData = {
             zoneSlug,
-            productName,
+            category,
+            id,
             data: {
               empName,
               description,
               type,
-              id,
               date: formattedDate,
               salary: getSalary[0].salary,
             },
           };
-          dispatch(editZoneDetails(payloadData));
+          editZoneDetails(payloadData);
           dispatch(
             showNotification({ message: "Zone details Updated!", status: 1 })
           );
@@ -159,33 +231,40 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
       } else {
         if (!extraObject) {
           const { amount, description, type, resource } = formData;
-          dispatch();
-          // addZoneDetails(
-          //   { text: "hey" },
-          //   {
-          //     amount,
-          //     description,
-          //     type,
-          //     resource,
-          //     id: zoneData.length + 1,
-          //     date: formattedDate,
-          //   }
-          // )
+          const payloadData = {
+            navigate,
+            zoneSlug,
+            category,
+            data: {
+              amount,
+              description,
+              type,
+              resource,
+              id: arrLen?.length === undefined ? 1 : arrLen?.length + 1,
+              date: formattedDate,
+            },
+          };
+          // addZoneDetails(payloadData);
           dispatch(
             showNotification({ message: "Zone details added!", status: 1 })
           );
           closeModal();
         } else {
           const { amount, description, type, resource, id } = formData;
-          dispatch();
-          // editZoneDetails({
-          //   amount,
-          //   description,
-          //   type,
-          //   resource,
-          //   id,
-          //   date: formattedDate,
-          // })
+          const payloadData = {
+            zoneSlug,
+            category,
+            id,
+            data: {
+              amount,
+              description,
+              type,
+              resource,
+              id,
+              date: formattedDate,
+            },
+          };
+          // editZoneDetails(payloadData);
           dispatch(
             showNotification({ message: "Zone details Updated!", status: 1 })
           );

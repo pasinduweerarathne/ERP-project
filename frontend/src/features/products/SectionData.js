@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
 import TitleCard from "../../components/Cards/TitleCard";
+import "./pagination.css";
 import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
 } from "../../utils/globalConstantUtil";
 import { openModal } from "../common/modalSlice";
 import Table from "./components/Table";
+import { fetchZoneDetails } from "./productSlice";
+import ReactPaginate from "react-paginate";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -39,41 +42,37 @@ function convertProductName(str) {
 
 const SectionData = () => {
   const { zone, section } = useParams();
+  const zoneSlug = zone;
+  const category = convertProductName(section);
+
+  const [data, setData] = useState([]);
+  const [pageCount, setPageCount] = useState(1);
+  const currentPage = useRef();
   const dispatch = useDispatch();
 
-  const product = convertProductName(section);
+  useEffect(() => {
+    currentPage.current = 1;
+    getPaginatedExpenses();
+  }, []);
 
-  const zones = useSelector((state) => state.product.zones);
-  const zoneData = zones.filter((state) => state.zoneSlug === zone);
-  const sectionDetails = zoneData[0].details;
-  const detailsObjArr = sectionDetails.filter(
-    (state) => state.productName === product
-  );
-  const details = detailsObjArr[0]?.data;
+  function getPaginatedExpenses() {
+    fetch(
+      `http://localhost:4000/api/expenses/${zoneSlug}/${category}?page=${currentPage.current}`,
+      {
+        method: "GET",
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setPageCount(data.pageCount);
+        setData(data);
+      });
+  }
 
-  // const filteredZoneData = sectionData?.filter((data) => data?.zone === zone);
-  // const zoneData = filteredZoneData[0]?.data;
-  // const [data, setData] = useState([]);
-
-  // useEffect(() => {
-  //   setData(zoneData);
-  // }, [zoneData]);
-
-  // expenses calculate
-  // const filteredExensesData = data?.filter((data) => data?.type === "Expense");
-  // const expensesArray = filteredExensesData?.map((data) => data.salary);
-  // const totalExpenses = expensesArray?.reduce((accumulator, currentValue) => {
-  //   return accumulator + currentValue;
-  // }, 0);
-
-  // income calculate
-  // const filteredIncomeData = data?.filter((data) => data.type === "Income");
-  // const incomeArray = filteredIncomeData?.map((data) => Number(data.amount));
-  // const totalIncome = incomeArray?.reduce((accumulator, currentValue) => {
-  //   return accumulator + currentValue;
-  // }, 0);
-
-  // const netProfit = totalExpenses - totalIncome;
+  function handlePageClick(e) {
+    currentPage.current = e.selected + 1;
+    getPaginatedExpenses();
+  }
 
   const deleteZoneDetails = (id) => {
     dispatch(
@@ -84,7 +83,7 @@ const SectionData = () => {
           message: `Are you sure you want to delete this zone details?`,
           type: CONFIRMATION_MODAL_CLOSE_TYPES.ZONE_DETAILS_DELETE,
           _id: id,
-          product,
+          section,
           zone,
           toastMsg: "Successfully Deleted!",
         },
@@ -93,7 +92,7 @@ const SectionData = () => {
   };
 
   const editZoneDetails = (id) => {
-    const selectedData = details?.filter((z) => z.id === id);
+    const selectedData = data.expensesResult?.filter((z) => z._id === id);
     dispatch(
       openModal({
         title: "Edit zone details",
@@ -147,26 +146,54 @@ const SectionData = () => {
         topMargin="mt-2"
         TopSideButtons={<TopSideButtons />}
       >
-        {!details?.length ? (
+        {!data.expensesResult?.length ? (
           <h1 className="font-semibold text-center">
             No data available, Please add one
           </h1>
         ) : (
-          <div className="overflow-x-auto w-full">
-            <Table
-              tableHeader={[
-                "name",
-                "description",
-                "expense/income",
-                "amount",
-                "date",
-                "actions",
-              ]}
-              tableBody={details}
-              editData={editZoneDetails}
-              deleteData={deleteZoneDetails}
-            />
-          </div>
+          <>
+            <div className="overflow-x-auto w-full">
+              <Table
+                tableHeader={[
+                  "name",
+                  "description",
+                  "expense/income",
+                  "amount",
+                  "date",
+                  "actions",
+                ]}
+                tableBody={data?.expensesResult}
+                editData={editZoneDetails}
+                deleteData={deleteZoneDetails}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  padding: 20,
+                  boxSizing: "border-box",
+                }}
+              >
+                <ReactPaginate
+                  activeClassName={"item active "}
+                  breakClassName={"item break-me "}
+                  breakLabel={"..."}
+                  containerClassName={"pagination"}
+                  disabledClassName={"disabled-page"}
+                  marginPagesDisplayed={2}
+                  nextClassName={"item next"}
+                  nextLabel={"-->"}
+                  onPageChange={handlePageClick}
+                  pageCount={pageCount}
+                  pageClassName={"item pagination-page "}
+                  pageRangeDisplayed={2}
+                  previousClassName={"item previous"}
+                  previousLabel={"<--"}
+                />
+              </div>
+            </div>
+          </>
         )}
       </TitleCard>
     </>

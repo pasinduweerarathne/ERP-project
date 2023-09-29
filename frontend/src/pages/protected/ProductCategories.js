@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { setPageTitle } from "../../features/common/headerSlice";
-import { AVAILABLE_ZONES } from "../../features/products/components/data";
+import { AVAILABLE_ZONES_DETAILS } from "../../features/products/components/data";
 import ProductCategories from "../../features/products/ProductCategories";
 
 function InternalPage() {
@@ -18,7 +18,7 @@ function InternalPage() {
   }
 
   function getAvailableCategories(zoneText) {
-    const zoneObject = AVAILABLE_ZONES.find(
+    const zoneObject = AVAILABLE_ZONES_DETAILS.find(
       (zone) => zone.zoneSlug === zoneText
     );
 

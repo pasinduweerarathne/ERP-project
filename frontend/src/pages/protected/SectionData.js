@@ -5,14 +5,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { setPageTitle } from "../../features/common/headerSlice";
 import SectionData from "../../features/products/SectionData";
 
-function convertZone(str) {
-  return str
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
-function convertSection(str) {
+function convertString(str) {
   return str
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -26,7 +19,9 @@ function InternalPage() {
   useEffect(() => {
     dispatch(
       setPageTitle({
-        title: `${convertZone(zone)} zone - ${convertSection(section)} section`,
+        title: `${convertString(zone)} zone > ${convertString(
+          section
+        )} section`,
       })
     );
   }, []);

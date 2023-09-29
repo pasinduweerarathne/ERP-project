@@ -7,12 +7,12 @@ import {
 import { deleteLead } from "../../leads/leadSlice";
 import { showNotification } from "../headerSlice";
 import { deleteEmployee } from "../../employeeManagement/employeeSlice";
-import { deleteZoneDetails } from "../../products/productSlice";
+import { deleteZoneDetailsNew } from "../../products/productSlice";
 
 function ConfirmationModalBody({ extraObject, closeModal }) {
   const dispatch = useDispatch();
 
-  const { message, type, _id, index, toastMsg, zone, product } = extraObject;
+  const { message, type, _id, index, toastMsg, zone, section } = extraObject;
 
   const proceedWithYes = async () => {
     // if (type === CONFIRMATION_MODAL_CLOSE_TYPES.LEAD_DELETE) {
@@ -25,7 +25,7 @@ function ConfirmationModalBody({ extraObject, closeModal }) {
       dispatch(showNotification({ message: toastMsg, status: 1 }));
     }
     if (type === CONFIRMATION_MODAL_CLOSE_TYPES.ZONE_DETAILS_DELETE) {
-      dispatch(deleteZoneDetails({ _id, zone, product }));
+      dispatch(deleteZoneDetailsNew({ _id, section, zone }));
       dispatch(showNotification({ message: toastMsg, status: 1 }));
     }
     closeModal();

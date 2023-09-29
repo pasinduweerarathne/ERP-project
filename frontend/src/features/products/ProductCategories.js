@@ -1,17 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import TeaImage from "./images/tea.jpg";
 import CoconutImage from "./images/coconut.jpg";
 import DurianImage from "./images/durian.jpg";
 import CinnamonImage from "./images/cinnamon.jpg";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchZones } from "./productSlice";
 
 const ProductCategories = ({ products }) => {
   const { zone } = useParams();
+  const dispatch = useDispatch();
+  const zoneData = useSelector((state) =>
+    state.product.zones.filter((z) => z.name === zone)
+  );
+  const categoires = zoneData?.map((z) => z.categories);
+  const zones = useSelector((state) => state.product.zones);
+
+  useEffect(() => {
+    if (!zones.length) dispatch(fetchZones());
+  }, []);
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <NavLink className={"btn btn-primary btn-sm ml-5"} to={`/app/zones`}>
+      <div className="flex items-center justify-end">
+        <NavLink className={"btn btn-primary btn-sm"} to={`/app/zones`}>
           Back
         </NavLink>
       </div>
@@ -37,7 +49,7 @@ const ProductCategories = ({ products }) => {
       </div>
 
       <div className={`grid grid-cols-3 gap-4 pt-8`}>
-        {products.map((product) => (
+        {categoires[0]?.map((product) => (
           <NavLink
             to={`/app/zones/${zone}/${product
               .toLowerCase()

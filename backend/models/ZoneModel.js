@@ -1,19 +1,9 @@
+// models/Zone.js
 const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema;
-
-const zoneSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    zoneNumber: {
-      type: String,
-      required: true,
-    },
-  },
-  { timestamps: true }
-);
+const zoneSchema = new mongoose.Schema({
+  name: String,
+  categories: [String],
+});
 
 module.exports = mongoose.model("Zone", zoneSchema);

@@ -44,9 +44,11 @@ function EmployeeManagement() {
     dispatch(getEmployeesContent());
   }, []);
 
-  useEffect(() => {
-    setEmployees(fetchEmployees);
-  }, [fetchEmployees]);
+  console.log(fetchEmployees);
+
+  // useEffect(() => {
+  //   setEmployees(fetchEmployees);
+  // }, [fetchEmployees]);
 
   const deleteEmployee = (id) => {
     dispatch(
@@ -64,7 +66,7 @@ function EmployeeManagement() {
   };
 
   const editEmployee = (id) => {
-    const selectedEmp = employees.filter((e) => e._id === id);
+    const selectedEmp = fetchEmployees.filter((e) => e._id === id);
 
     dispatch(
       openModal({
@@ -83,14 +85,14 @@ function EmployeeManagement() {
         TopSideButtons={<TopSideButtons />}
       >
         <div className="overflow-x-auto w-full">
-          {employees.length === 0 ? (
+          {fetchEmployees.length === 0 ? (
             <h1 className="font-semibold text-center">
               No data available, Please add an employee
             </h1>
           ) : (
             <Table
               tableHeader={["Name", "Nic", "Address", "Salary", "Actions"]}
-              tableBody={employees}
+              tableBody={fetchEmployees}
               editEmp={editEmployee}
               deleteEmp={deleteEmployee}
               showAction={true}
