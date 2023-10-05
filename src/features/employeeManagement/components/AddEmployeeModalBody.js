@@ -1,19 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import InputText from "../../../components/Input/InputText";
 import ErrorText from "../../../components/Typography/ErrorText";
 import { showNotification } from "../../common/headerSlice";
-import {
-  addEmployee,
-  addNewEmployee,
-  editEmployee,
-  getEmployeesContent,
-} from "../employeeSlice";
+import { addEmployee, editEmployee } from "../employeeSlice";
 import { useNavigate } from "react-router-dom";
 
 function AddEmployeeModalBody({ closeModal, extraObject }) {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
   const [employeeObj, setEmployeeObj] = useState({
     name: extraObject.selectedEmp ? extraObject.selectedEmp[0].name : "",
     nic: extraObject.selectedEmp ? extraObject.selectedEmp[0].nic : "",

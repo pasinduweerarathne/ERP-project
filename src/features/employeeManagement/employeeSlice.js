@@ -1,12 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { baseUrl } from "../../utils/dummyData";
+import { baseUrl } from "../../utils/globalVariables";
 
 export const getEmployeesContent = createAsyncThunk(
   "/employees/fetchEmployees",
   async (page) => {
     const response = await axios.get(
       `${baseUrl}/employees?page=${parseInt(page) ? parseInt(page) : 1}`,
+      {}
+    );
+    return response.data;
+  }
+);
+
+export const getEmployeeBySearch = createAsyncThunk(
+  "/employees/fetchEmployeeBySearch",
+  async (searchText) => {
+    const response = await axios.get(
+      `${baseUrl}/employees/search?searchQuery=${searchText}`,
       {}
     );
     return response.data;
@@ -66,6 +77,9 @@ export const employeeSlice = createSlice({
     },
     [getEmployeesContent.rejected]: (state) => {
       state.isLoading = false;
+    },
+    [getEmployeeBySearch.fulfilled]: (state, action) => {
+      state.employees = action.payload;
     },
     [addEmployee.fulfilled]: (state, action) => {},
     [editEmployee.fulfilled]: (state, action) => {},

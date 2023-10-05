@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import InputText from "../../../components/Input/InputText";
 import SelectOption from "../../../components/Input/SelectOption";
 import TextAreaInput from "../../../components/Input/TextAreaInput";
@@ -24,27 +24,39 @@ function convertString(str) {
 function AddZoneDetailsModalBody({ closeModal, extraObject }) {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    id: extraObject ? extraObject[0]._id : null,
-    type: extraObject ? extraObject[0].type : "Expense",
-    description: extraObject ? extraObject[0].description : "",
-    empName: extraObject ? extraObject[0].empName : "",
-    resource: extraObject ? extraObject[0].resource : "",
-    amount: extraObject ? extraObject[0].amount : "",
+    id: extraObject?.selectedData ? extraObject.selectedData[0]._id : null,
+    type: extraObject?.selectedData
+      ? extraObject.selectedData[0].type
+      : "Expense",
+    eDescription: extraObject?.selectedData
+      ? extraObject.selectedData[0].eDescription
+      : "",
+    iDescription: extraObject?.selectedData
+      ? extraObject.selectedData[0].iDescription
+      : "",
+    empName: extraObject?.selectedData
+      ? extraObject.selectedData[0].empName
+      : "",
+    resource: extraObject?.selectedData
+      ? extraObject.selectedData[0].resource
+      : "",
+    amount: extraObject?.selectedData ? extraObject.selectedData[0].amount : "",
   });
   const [formErrors, setFormErrors] = useState({
     type: "",
-    description: "",
+    eDescription: "",
+    iDescription: "",
     empName: "",
     resource: "",
     amount: "",
   });
   const { pathname } = useLocation();
+
   let hasErrors = false;
 
   const zoneSlug = pathname.split("/")[3];
   const section = pathname.split("/")[4];
   const category = convertString(section);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!zones.length) dispatch(fetchZones());
@@ -96,8 +108,8 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
         newFormErrors.empName = "Name is required";
         hasErrors = true;
       }
-      if (formData.description.trim() === "") {
-        newFormErrors.description = "Description is required";
+      if (formData.eDescription.trim() === "") {
+        newFormErrors.eDescription = "Description is required";
         hasErrors = true;
       }
     }
@@ -111,8 +123,8 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
         newFormErrors.amount = "Amount is required";
         hasErrors = true;
       }
-      if (formData.description.trim() === "") {
-        newFormErrors.description = "Description is required";
+      if (formData.iDescription.trim() === "") {
+        newFormErrors.iDescription = "Description is required";
         hasErrors = true;
       }
     }
@@ -123,19 +135,18 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
     } else {
       if (formData.type === "Expense") {
         if (!extraObject) {
-          const { empName, description, type } = formData;
+          const { empName, eDescription, type } = formData;
           const payloadData = {
             zoneSlug,
             categoryName: category,
             zoneId: zone._id,
             data: {
               empName,
-              description,
+              eDescription,
               type,
               date: formattedDate,
               salary: getSalary[0].salary,
             },
-            navigate,
           };
           dispatch(addZoneDetails(payloadData));
           dispatch(
@@ -143,14 +154,15 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
           );
           closeModal();
         } else {
-          const { empName, description, type, id } = formData;
+          const { empName, eDescription, type, id } = formData;
           const payloadData = {
             zoneSlug,
             category,
             id,
+            page: extraObject.page,
             data: {
               empName,
-              description,
+              eDescription,
               type,
               date: formattedDate,
               salary: getSalary[0].salary,
@@ -164,40 +176,41 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
         }
       } else {
         if (!extraObject) {
-          const { amount, description, type, resource } = formData;
+          const { amount, iDescription, type, resource } = formData;
           const payloadData = {
-            navigate,
             zoneSlug,
-            category,
+            categoryName: category,
+            zoneId: zone._id,
             data: {
               amount,
-              description,
+              iDescription,
               type,
               resource,
               date: formattedDate,
             },
           };
-          addZoneDetails(payloadData);
+          dispatch(addZoneDetails(payloadData));
           dispatch(
             showNotification({ message: "Zone details added!", status: 1 })
           );
           closeModal();
         } else {
-          const { amount, description, type, resource, id } = formData;
+          const { amount, iDescription, type, resource, id } = formData;
           const payloadData = {
             zoneSlug,
             category,
             id,
+            page: extraObject.page,
             data: {
               amount,
-              description,
+              iDescription,
               type,
               resource,
               id,
               date: formattedDate,
             },
           };
-          // editZoneDetails(payloadData);
+          dispatch(editZoneDetails(payloadData));
           dispatch(
             showNotification({ message: "Zone details Updated!", status: 1 })
           );
@@ -214,17 +227,17 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
     if (updateType === "empName") {
       setFormErrors({ ...formErrors, empName: "" });
     }
-    if (updateType === "description") {
-      setFormErrors({ ...formErrors, description: "" });
+    if (updateType === "eDescription") {
+      setFormErrors({ ...formErrors, eDescription: "" });
+    }
+    if (updateType === "iDescription") {
+      setFormErrors({ ...formErrors, iDescription: "" });
     }
     if (updateType === "resource") {
       setFormErrors({ ...formErrors, resource: "" });
     }
     if (updateType === "amount") {
       setFormErrors({ ...formErrors, amount: "" });
-    }
-    if (updateType === "description") {
-      setFormErrors({ ...formErrors, description: "" });
     }
     setFormData({ ...formData, [updateType]: value });
   };
@@ -266,14 +279,14 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
 
           <TextAreaInput
             type="text"
-            id="description"
-            defaultValue={formData.description}
-            updateType="description"
+            id="iDescription"
+            defaultValue={formData.iDescription}
+            updateType="iDescription"
             containerStyle="mt-4"
             labelTitle="Description"
             updateFormValue={updateFormValue}
           />
-          <ErrorText styleClass="mt-5">{formErrors.description}</ErrorText>
+          <ErrorText styleClass="mt-5">{formErrors.iDescription}</ErrorText>
         </>
       )}
 
@@ -291,14 +304,14 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
 
           <TextAreaInput
             type="text"
-            id="description"
-            defaultValue={formData.description}
-            updateType="description"
+            id="eDescription"
+            defaultValue={formData.eDescription}
+            updateType="eDescription"
             containerStyle="mt-4"
             labelTitle="Description"
             updateFormValue={updateFormValue}
           />
-          <ErrorText styleClass="mt-5">{formErrors.description}</ErrorText>
+          <ErrorText styleClass="mt-5">{formErrors.eDescription}</ErrorText>
         </>
       )}
 

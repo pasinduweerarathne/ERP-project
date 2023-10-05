@@ -18,10 +18,12 @@ const Table = ({ tableHeader, tableBody, editData, deleteData }) => {
         </tr>
       </thead>
       <tbody>
-        {tableBody?.map((data) => (
-          <tr>
+        {tableBody?.map((data, i) => (
+          <tr key={i}>
             <td>{data?.empName || data?.resource}</td>
-            <td>{data?.description}</td>
+            <td>
+              {data?.eDescription || data?.iDescription}
+            </td>
             <td>{data?.type}</td>
             <td>{data?.salary || data?.amount}</td>
             <td>{moment(data?.createdAt).format("MMMM DD, YYYY")}</td>

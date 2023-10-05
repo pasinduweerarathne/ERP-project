@@ -23,8 +23,8 @@ const Table = ({ tableHeader, tableBody, editEmp, deleteEmp, showAction }) => {
         </tr>
       </thead>
       <tbody>
-        {tableBody?.map((emp) => (
-          <tr>
+        {tableBody?.map((emp, i) => (
+          <tr key={i}>
             <td>{emp.name}</td>
             <td>{emp.nic}</td>
             <td>{emp.address}</td>

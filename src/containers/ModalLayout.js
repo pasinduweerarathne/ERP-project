@@ -1,8 +1,6 @@
-import { useEffect } from "react";
 import { MODAL_BODY_TYPES } from "../utils/globalConstantUtil";
 import { useSelector, useDispatch } from "react-redux";
 import { closeModal } from "../features/common/modalSlice";
-import AddLeadModalBody from "../features/leads/components/AddLeadModalBody";
 import ConfirmationModalBody from "../features/common/components/ConfirmationModalBody";
 import AddEmployeeModalBody from "../features/employeeManagement/components/AddEmployeeModalBody";
 import AddZoneDetailsModalBody from "../features/products/components/AddZoneDetailsModalBody";
@@ -35,12 +33,6 @@ function ModalLayout() {
           {/* Loading modal body according to different modal type */}
           {
             {
-              [MODAL_BODY_TYPES.LEAD_ADD_NEW]: (
-                <AddLeadModalBody
-                  closeModal={close}
-                  extraObject={extraObject}
-                />
-              ),
               [MODAL_BODY_TYPES.EMPLOYEE_ADD_NEW]: (
                 <AddEmployeeModalBody
                   closeModal={close}

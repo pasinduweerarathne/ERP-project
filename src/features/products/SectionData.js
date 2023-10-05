@@ -2,15 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import TitleCard from "../../components/Cards/TitleCard";
-import "./pagination.css";
 import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
 } from "../../utils/globalConstantUtil";
 import { openModal } from "../common/modalSlice";
 import Table from "./components/Table";
-import { fetchZoneDetails } from "./productSlice";
-import ReactPaginate from "react-paginate";
+import { fetchZoneDetails, fetchZoneDetailsBySearch } from "./productSlice";
+import Paginate from "../../components/Pagination/Paginate";
+import SearchBar from "../../components/Input/SearchBar";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -40,81 +40,101 @@ function convertProductName(str) {
     .join(" ");
 }
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 const SectionData = () => {
   const { zone, section } = useParams();
   const zoneSlug = zone;
   const category = convertProductName(section);
-  const currentPage = useRef();
+  const query = useQuery();
+  const page = query.get("page") || 1;
   const dispatch = useDispatch();
-
-  const fetchData = useSelector((state) => state.product.zoneDetails);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
-    currentPage.current = 1;
-    const obj = { category, page: currentPage.current, zoneSlug };
-    dispatch(fetchZoneDetails(obj));
-  }, []);
+    if (searchText) {
+      if (searchText.trim() !== "") {
+        const obj = { category, zoneSlug, searchText };
+        dispatch(fetchZoneDetailsBySearch(obj));
+      }
+    } else {
+      const obj = { category, page, zoneSlug };
+      dispatch(fetchZoneDetails(obj));
+    }
+  }, [searchText, page, dispatch]);
 
-  function handlePageClick(e) {
-    currentPage.current = e.selected + 1;
-    const obj = { category, page: currentPage.current, zoneSlug };
-    dispatch(fetchZoneDetails(obj));
+  const { isLoading, zoneDetails } = useSelector((state) => state.product);
+
+  let emptyText;
+  if (zoneDetails.zoneDetailsResults?.modelResults?.length === 0) {
+    emptyText = "No data available, Please add one";
+  }
+  if (zoneDetails.details?.length === 0) {
+    emptyText = `No search results for "${searchText}"`;
   }
 
   const deleteZoneDetails = (id) => {
-    // dispatch(
-    //   openModal({
-    //     title: "Confirmation",
-    //     bodyType: MODAL_BODY_TYPES.CONFIRMATION,
-    //     extraObject: {
-    //       message: `Are you sure you want to delete this zone details?`,
-    //       type: CONFIRMATION_MODAL_CLOSE_TYPES.ZONE_DETAILS_DELETE,
-    //       _id: id,
-    //       section,
-    //       zone,
-    //       toastMsg: "Successfully Deleted!",
-    //     },
-    //   })
-    // );
+    dispatch(
+      openModal({
+        title: "Confirmation",
+        bodyType: MODAL_BODY_TYPES.CONFIRMATION,
+        extraObject: {
+          message: `Are you sure you want to delete this zone details?`,
+          type: CONFIRMATION_MODAL_CLOSE_TYPES.ZONE_DETAILS_DELETE,
+          _id: id,
+          category,
+          zone,
+          toastMsg: "Successfully Deleted!",
+        },
+      })
+    );
+
+    setSearchText("");
   };
 
   const editZoneDetails = (id) => {
-    const selectedData = fetchData.modelResults?.filter((z) => z._id === id);
+    let selectedData;
+
+    if (zoneDetails.zoneDetailsResults?.modelResults) {
+      selectedData = zoneDetails.zoneDetailsResults?.modelResults?.filter(
+        (z) => z._id === id
+      );
+    } else {
+      selectedData = zoneDetails.details?.filter((z) => z._id === id);
+    }
+
+    const dataObj = { page, selectedData };
     dispatch(
       openModal({
         title: "Edit zone details",
         bodyType: MODAL_BODY_TYPES.ADD_ZONE_DETAILS,
-        extraObject: selectedData,
+        extraObject: dataObj,
       })
     );
+    setSearchText("");
   };
 
   return (
     <>
-      <div className="dark:text-white flex items-center justify-between">
-        <NavLink
-          className={"btn btn-primary btn-sm ml-5"}
-          to={`/app/zones/${zone}`}
-        >
+      <div className="dark:text-white flex justify-end">
+        <NavLink className={"btn btn-primary btn-sm"} to={`/app/zones/${zone}`}>
           Back
         </NavLink>
       </div>
 
-      <div className="grid lg:grid-cols-3 mt-4 md:grid-cols-2 grid-cols-1 gap-6">
+      <div className="grid lg:grid-cols-3 mt-4 mb-8 md:grid-cols-2 grid-cols-1 gap-6">
         <div className="stats shadow p-4">
           <div className="text-center">
             <div className={`text-2xl dark:text-slate-300`}>Total Income:</div>
-            <div className="text-2xl">
-              {/* {totalIncome === undefined ? 0 : totalIncome} */}
-            </div>
+            <div className="text-2xl">{zoneDetails.totalIncomes}</div>
           </div>
         </div>
         <div className="stats shadow p-4">
           <div className="text-center">
             <div className={`text-2xl dark:text-slate-300`}>Total Expense:</div>
-            <div className="text-2xl">
-              {/* {totalExpenses === undefined ? 0 : totalExpenses} */}
-            </div>
+            <div className="text-2xl">{zoneDetails.totalExpenses}</div>
           </div>
         </div>
         <div className="stats shadow p-4">
@@ -122,7 +142,9 @@ const SectionData = () => {
             <div className={`text-2xl dark:text-slate-300`}>
               Total Net Income(Profit):
             </div>
-            {/* <div className="text-2xl">{isNaN(netProfit) ? 0 : netProfit}</div> */}
+            <div className="text-2xl">
+              {zoneDetails.totalIncomes - zoneDetails.totalExpenses}
+            </div>
           </div>
         </div>
       </div>
@@ -132,56 +154,49 @@ const SectionData = () => {
         title="Zone Details"
         topMargin="mt-2"
         TopSideButtons={<TopSideButtons />}
+        SearchBar={
+          <SearchBar
+            placeholderText={"Search Details By Name"}
+            searchText={searchText}
+            setSearchText={setSearchText}
+          />
+        }
       >
-        {!fetchData.modelResults ? (
+        {zoneDetails.zoneDetailsResults?.modelResults?.length === 0 ||
+        zoneDetails.details?.length === 0 ? (
           <h1 className="font-semibold text-center">
-            No data available, Please add one
+            {!isLoading && emptyText}
           </h1>
         ) : (
           <>
             <div className="overflow-x-auto w-full">
               <Table
                 tableHeader={[
-                  "name",
+                  "employee name / resource",
                   "description",
-                  "expense/income",
+                  "expense / income",
                   "amount",
                   "date",
                   "actions",
                 ]}
-                tableBody={fetchData.modelResults}
+                tableBody={
+                  zoneDetails.zoneDetailsResults?.modelResults
+                    ? zoneDetails.zoneDetailsResults.modelResults
+                    : zoneDetails.details
+                }
                 editData={editZoneDetails}
                 deleteData={deleteZoneDetails}
               />
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  padding: 20,
-                  boxSizing: "border-box",
-                }}
-              >
-                <ReactPaginate
-                  activeClassName={"item active "}
-                  breakClassName={"item break-me "}
-                  breakLabel={"..."}
-                  containerClassName={"pagination"}
-                  disabledClassName={"disabled-page"}
-                  marginPagesDisplayed={2}
-                  nextClassName={"item next"}
-                  nextLabel={"-->"}
-                  onPageChange={handlePageClick}
-                  pageCount={fetchData.totalPages}
-                  pageClassName={"item pagination-page "}
-                  pageRangeDisplayed={2}
-                  previousClassName={"item previous"}
-                  previousLabel={"<--"}
-                />
-              </div>
             </div>
           </>
         )}
+        <div className="flex justify-center">
+          <Paginate
+            page={parseInt(page) || 1}
+            totalPages={zoneDetails.zoneDetailsResults?.totalPages}
+            navigationLink={`/app/zones/${zone}/${section}?page=`}
+          />
+        </div>
       </TitleCard>
     </>
   );

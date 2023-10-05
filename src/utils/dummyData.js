@@ -241,7 +241,4 @@ module.exports = Object.freeze({
   ],
 });
 
-const baseUrl = "https://cloudy-yak-slippers.cyclic.cloud/api";
-// const baseUrl = "http://localhost:4000/api";
 
-module.exports = { baseUrl };

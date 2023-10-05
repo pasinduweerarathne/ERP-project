@@ -5,17 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getEmployeesContent } from "../../features/employeeManagement/employeeSlice";
 import { Pagination, PaginationItem } from "@material-ui/lab";
 
-const Paginate = ({ page, totalPages }) => {
-  const { isLoading } = useSelector((state) => state.employee);
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (page) {
-      dispatch(getEmployeesContent(page));
-    }
-  }, [page, dispatch]);
-
+const Paginate = ({ page, totalPages, navigationLink }) => {
   return (
     <Pagination
       count={totalPages}
@@ -25,7 +15,7 @@ const Paginate = ({ page, totalPages }) => {
         <PaginationItem
           {...item}
           component={Link}
-          to={`/app/employee-management?page=${item.page}`}
+          to={`${navigationLink}${item.page}`}
         />
       )}
     />

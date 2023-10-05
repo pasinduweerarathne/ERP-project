@@ -17,11 +17,11 @@ function UserChannels() {
     <TitleCard title={"Available Employees"}>
       {/** Table Data */}
       <div className="overflow-x-auto">
-        <Table
+        {/* <Table
           tableHeader={["Name", "Nic", "Address", "Salary", "Actions"]}
           tableBody={employees}
           showAction={false}
-        />
+        /> */}
       </div>
     </TitleCard>
   );

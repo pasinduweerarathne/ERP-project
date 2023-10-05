@@ -6,10 +6,11 @@ import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
 } from "../../utils/globalConstantUtil";
-import { getEmployeesContent } from "./employeeSlice";
+import { getEmployeeBySearch, getEmployeesContent } from "./employeeSlice";
 import Table from "./components/Table";
 import { useLocation, useNavigate } from "react-router-dom";
 import Paginate from "../../components/Pagination/Paginate";
+import SearchBar from "../../components/Input/SearchBar";
 
 const TopSideButtons = ({ page }) => {
   const dispatch = useDispatch();
@@ -42,11 +43,30 @@ function useQuery() {
 
 function EmployeeManagement() {
   const dispatch = useDispatch();
-  const currentPage = useRef();
   const query = useQuery();
   const page = query.get("page") || 1;
+  const [searchText, setSearchText] = useState("");
+
+  useEffect(() => {
+    if (searchText) {
+      if (searchText.trim() !== "") {
+        dispatch(getEmployeeBySearch(searchText));
+      }
+    } else {
+      dispatch(getEmployeesContent(page));
+    }
+  }, [searchText, page, dispatch]);
 
   const fetchEmployees = useSelector((state) => state.employee.employees);
+  const { isLoading } = useSelector((state) => state.employee);
+
+  let emptyText;
+  if (fetchEmployees.modelResults?.length === 0) {
+    emptyText = "No data available, Please add one";
+  }
+  if (fetchEmployees?.length === 0) {
+    emptyText = `No search results for "${searchText}"`;
+  }
 
   const deleteEmployee = (id) => {
     dispatch(
@@ -62,10 +82,18 @@ function EmployeeManagement() {
         },
       })
     );
+
+    setSearchText("");
   };
 
   const editEmployee = (id) => {
-    const selectedEmp = fetchEmployees.modelResults.filter((e) => e._id === id);
+    let selectedEmp;
+    if (fetchEmployees.modelResults) {
+      selectedEmp = fetchEmployees.modelResults.filter((e) => e._id === id);
+    } else {
+      selectedEmp = fetchEmployees.filter((e) => e._id === id);
+    }
+
     const dataObj = { page: page, selectedEmp };
 
     dispatch(
@@ -75,6 +103,8 @@ function EmployeeManagement() {
         extraObject: dataObj,
       })
     );
+
+    setSearchText("");
   };
 
   return (
@@ -83,16 +113,28 @@ function EmployeeManagement() {
         title="Current Employees"
         topMargin="mt-2"
         TopSideButtons={<TopSideButtons />}
+        SearchBar={
+          <SearchBar
+            placeholderText={"Search Employees"}
+            searchText={searchText}
+            setSearchText={setSearchText}
+          />
+        }
       >
         <div className="overflow-x-auto w-full">
-          {!fetchEmployees.modelResults ? (
+          {fetchEmployees.modelResults?.length === 0 ||
+          fetchEmployees?.length === 0 ? (
             <h1 className="font-semibold text-center">
-              No data available, Please add an employee
+              {!isLoading && emptyText}
             </h1>
           ) : (
             <Table
               tableHeader={["Name", "Nic", "Address", "Salary", "Actions"]}
-              tableBody={fetchEmployees.modelResults}
+              tableBody={
+                fetchEmployees.modelResults
+                  ? fetchEmployees?.modelResults
+                  : fetchEmployees
+              }
               editEmp={editEmployee}
               deleteEmp={deleteEmployee}
               showAction={true}
@@ -102,6 +144,7 @@ function EmployeeManagement() {
             <Paginate
               page={parseInt(page) || 1}
               totalPages={fetchEmployees.totalPages}
+              navigationLink="/app/employee-management?page="
             />
           </div>
         </div>

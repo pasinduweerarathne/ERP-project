@@ -1,6 +1,6 @@
 import Subtitle from "../Typography/Subtitle";
 
-function TitleCard({ title, children, topMargin, TopSideButtons }) {
+function TitleCard({ title, children, topMargin, TopSideButtons, SearchBar }) {
   return (
     <div
       className={
@@ -8,14 +8,14 @@ function TitleCard({ title, children, topMargin, TopSideButtons }) {
       }
     >
       {/* Title for Card */}
-      <Subtitle styleClass={TopSideButtons ? "inline-block" : ""}>
-        {title}
+      <div className="grid lg:grid-cols-3 mt-2 md:grid-cols-3 grid-cols-1 place-items-center gap-6">
+        <h1 className="text-xl font-semibold">{title}</h1>
+
+        {SearchBar && <>{SearchBar}</>}
 
         {/* Top side button, show only if present */}
-        {TopSideButtons && (
-          <div className="inline-block float-right">{TopSideButtons}</div>
-        )}
-      </Subtitle>
+        {TopSideButtons && <div className="">{TopSideButtons}</div>}
+      </div>
 
       <div className="divider mt-2"></div>
 
