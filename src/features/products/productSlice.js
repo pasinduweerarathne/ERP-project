@@ -71,6 +71,8 @@ export const addZoneDetails = createAsyncThunk(
         amount,
       };
       await axios.post(`${baseUrl}/zone-details`, body);
+      const fetchParams = { zoneSlug, category: categoryName, page: 1 };
+      dispatch(fetchZoneDetails(fetchParams));
     }
   }
 );
