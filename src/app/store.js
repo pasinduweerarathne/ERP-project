@@ -4,6 +4,7 @@ import modalSlice from "../features/common/modalSlice";
 import rightDrawerSlice from "../features/common/rightDrawerSlice";
 import employeeSlice from "../features/employeeManagement/employeeSlice";
 import productSlice from "../features/products/productSlice";
+import salarySlice from "../features/salaryManagement/salarySlice";
 
 const combinedReducer = {
   header: headerSlice,
@@ -11,6 +12,7 @@ const combinedReducer = {
   modal: modalSlice,
   employee: employeeSlice,
   product: productSlice,
+  salary: salarySlice,
 };
 
 export default configureStore({
