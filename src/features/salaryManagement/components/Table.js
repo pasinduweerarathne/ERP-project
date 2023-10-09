@@ -4,10 +4,10 @@ import { useSelector } from "react-redux";
 import "./tableStyles.css";
 
 const Table = ({ tableHeader, tableBody, showAction, onHandleWithdraw }) => {
-  const { isLoading } = useSelector((state) => state.salary);
-
   const colWidth = `calc(100% / ${tableHeader.length})`;
   const style = { width: colWidth };
+
+  console.log(tableBody);
 
   return (
     <table className="tableDiv w-full">

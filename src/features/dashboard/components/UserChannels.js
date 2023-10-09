@@ -1,27 +1,35 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import TitleCard from "../../../components/Cards/TitleCard";
+import { baseUrl } from "../../../utils/globalVariables";
 import Table from "../../employeeManagement/components/Table";
-import { getEmployeesContent } from "../../employeeManagement/employeeSlice";
 
 function UserChannels() {
-  const dispatch = useDispatch();
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    dispatch(getEmployeesContent());
+    fetch(`${baseUrl}/employees/allemployees`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setData(data);
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+      });
   }, []);
-
-  const employees = useSelector((state) => state.employee.employees);
 
   return (
     <TitleCard title={"Available Employees"}>
-      {/** Table Data */}
       <div className="overflow-x-auto">
-        {/* <Table
+        <Table
           tableHeader={["Name", "Nic", "Address", "Salary", "Actions"]}
-          tableBody={employees}
+          tableBody={data}
           showAction={false}
-        /> */}
+        />
       </div>
     </TitleCard>
   );

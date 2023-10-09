@@ -4,8 +4,23 @@ import { baseUrl } from "../../utils/globalVariables";
 
 export const getSalaries = createAsyncThunk(
   "/salaries/fetchSalaries",
-  async () => {
-    const res = await axios.get(`${baseUrl}/salaries`, {});
+  async (page) => {
+    const res = await axios.get(
+      `${baseUrl}/salaries?page=${parseInt(page) ? parseInt(page) : 1}`,
+      {}
+    );
+
+    return res.data;
+  }
+);
+
+export const getSalariesByName = createAsyncThunk(
+  "/salaries/fetchSalariesByName",
+  async (searchText) => {
+    const res = await axios.get(
+      `${baseUrl}/salaries/search?searchQuery=${searchText}`
+    );
+
     return res.data;
   }
 );
@@ -36,6 +51,9 @@ export const salarySlice = createSlice({
     },
     [getSalaries.rejected]: (state) => {
       state.isLoading = false;
+    },
+    [getSalariesByName.fulfilled]: (state, action) => {
+      state.salaries = action.payload;
     },
   },
 });

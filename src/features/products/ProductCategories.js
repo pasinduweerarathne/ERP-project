@@ -6,8 +6,9 @@ import DurianImage from "./images/durian.jpg";
 import CinnamonImage from "./images/cinnamon.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchZones } from "./productSlice";
+import { baseUrl } from "../../utils/globalVariables";
 
-const ProductCategories = ({ products }) => {
+const ProductCategories = () => {
   const { zone } = useParams();
   const dispatch = useDispatch();
   const zoneData = useSelector((state) =>
@@ -15,9 +16,32 @@ const ProductCategories = ({ products }) => {
   );
   const categoires = zoneData?.map((z) => z.categories);
   const zones = useSelector((state) => state.product.zones);
+  const [incomesAndExpenses, setIncomesAndExpenses] = useState({
+    totalIncomes: "",
+    totalExpenses: "",
+  });
 
   useEffect(() => {
     if (!zones.length) dispatch(fetchZones());
+
+    fetch(`${baseUrl}/zone-details/${zone}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        return response.json();
+      })
+      .then((data) => {
+        setIncomesAndExpenses({
+          ...incomesAndExpenses,
+          totalExpenses: data.totalExpenses,
+          totalIncomes: data.totalIncomes,
+        });
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+      });
   }, []);
 
   return (
@@ -27,23 +51,29 @@ const ProductCategories = ({ products }) => {
           Back
         </NavLink>
       </div>
-      <div className="grid lg:grid-cols-3 mt-4 md:grid-cols-2 grid-cols-1 gap-6">
-        <div className="stats shadow p-5">
-          <div className="flex items-center justify-around">
-            <div className={`text-2xl dark:text-slate-300`}>Income</div>
-            <div className="mt-[8px]">20000</div>
+
+      <div className="grid lg:grid-cols-3 mt-4 mb-8 md:grid-cols-2 grid-cols-1 gap-6">
+        <div className="stats shadow p-4">
+          <div className="text-center">
+            <div className={`text-2xl dark:text-slate-300`}>Total Income:</div>
+            <div className="text-2xl">{incomesAndExpenses.totalIncomes}</div>
           </div>
         </div>
-        <div className="stats shadow p-5">
-          <div className="flex items-center justify-around">
-            <div className={`text-2xl dark:text-slate-300`}>Expense</div>
-            <div className="mt-[8px]">20000</div>
+        <div className="stats shadow p-4">
+          <div className="text-center">
+            <div className={`text-2xl dark:text-slate-300`}>Total Expense:</div>
+            <div className="text-2xl">{incomesAndExpenses.totalExpenses}</div>
           </div>
         </div>
-        <div className="stats shadow p-5">
-          <div className="flex items-center justify-around">
-            <div className={`text-2xl dark:text-slate-300`}>Profit</div>
-            <div className="mt-[8px]">20000</div>
+        <div className="stats shadow p-4">
+          <div className="text-center">
+            <div className={`text-2xl dark:text-slate-300`}>
+              Total Net Income(Profit):
+            </div>
+            <div className="text-2xl">
+              {incomesAndExpenses.totalIncomes -
+                incomesAndExpenses.totalExpenses}
+            </div>
           </div>
         </div>
       </div>
@@ -55,40 +85,40 @@ const ProductCategories = ({ products }) => {
               .toLowerCase()
               .replace(/ /g, "-")}`}
           >
-            <div class="relative w-full h-56 rounded-lg overflow-hidden shadow-lg bg-black">
-              <div class="absolute top-0 left-0 w-full h-full filter opacity-50">
+            <div className="relative w-full h-56 rounded-lg overflow-hidden shadow-lg bg-black">
+              <div className="absolute top-0 left-0 w-full h-full filter opacity-50">
                 {product.toLowerCase().includes("tea") && (
                   <img
                     src={TeaImage}
                     alt="Blurred Background"
-                    class="object-cover w-full h-full"
+                    className="object-cover w-full h-full"
                   />
                 )}
                 {product.toLowerCase().includes("coconut") && (
                   <img
                     src={CoconutImage}
                     alt="Blurred Background"
-                    class="object-cover w-full h-full"
+                    className="object-cover w-full h-full"
                   />
                 )}
                 {product.toLowerCase().includes("durian") && (
                   <img
                     src={DurianImage}
                     alt="Blurred Background"
-                    class="object-cover w-full h-full"
+                    className="object-cover w-full h-full"
                   />
                 )}
                 {product.toLowerCase().includes("cinnamon") && (
                   <img
                     src={CinnamonImage}
                     alt="Blurred Background"
-                    class="object-cover w-full h-full"
+                    className="object-cover w-full h-full"
                   />
                 )}
               </div>
 
-              <div class="absolute inset-0 flex flex-col justify-center items-center p-6 text-white">
-                <h2 class="text-3xl font-semibold">{product}</h2>
+              <div className="absolute inset-0 flex flex-col justify-center items-center p-6 text-white">
+                <h2 className="text-3xl font-semibold">{product}</h2>
               </div>
             </div>
           </NavLink>

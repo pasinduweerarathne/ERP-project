@@ -41,6 +41,10 @@ function LineChart() {
     "May",
     "June",
     "July",
+    "August",
+    "September",
+    "November",
+    "December",
   ];
 
   const data = {
