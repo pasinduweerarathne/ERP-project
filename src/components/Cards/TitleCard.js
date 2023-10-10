@@ -8,7 +8,13 @@ function TitleCard({ title, children, topMargin, TopSideButtons, SearchBar }) {
       }
     >
       {/* Title for Card */}
-      <div className="grid lg:grid-cols-3 mt-2 md:grid-cols-3 grid-cols-1 place-items-center gap-6">
+      <div
+        className={`grid lg:grid-cols-${
+          TopSideButtons ? 3 : 2
+        } mt-2 md:grid-cols-${
+          TopSideButtons ? 3 : 2
+        } grid-cols-1 place-items-center gap-6`}
+      >
         <h1 className="text-xl font-semibold">{title}</h1>
 
         {SearchBar && <>{SearchBar}</>}

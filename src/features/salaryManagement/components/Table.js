@@ -1,13 +1,9 @@
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import moment from "moment/moment";
 import "./tableStyles.css";
 
 const Table = ({ tableHeader, tableBody, showAction, onHandleWithdraw }) => {
   const colWidth = `calc(100% / ${tableHeader.length})`;
   const style = { width: colWidth };
-
-  console.log(tableBody);
 
   return (
     <table className="tableDiv w-full">
@@ -30,9 +26,14 @@ const Table = ({ tableHeader, tableBody, showAction, onHandleWithdraw }) => {
         {tableBody?.map((sal, i) => (
           <tr key={i}>
             <td>{sal.empName}</td>
-            <td>{sal.zoneSlug}</td>
-            <td>{sal.categoryName}</td>
-            <td>{sal.salary}</td>
+            <td>Rs.{sal.salary}</td>
+            <td>
+              {sal.lastWithdrawals.amount === 0
+                ? "-"
+                : `Rs.${sal.lastWithdrawals.amount} - ${moment(
+                    sal.lastWithdrawals.date
+                  ).format("YYYY/MM/DD - HH:mm:ss")}`}
+            </td>
             {showAction && (
               <td>
                 <div className="flex rounded-md shadow-sm">

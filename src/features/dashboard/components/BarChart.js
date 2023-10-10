@@ -8,7 +8,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import moment, { min } from "moment";
+import { Bar, Line } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
@@ -20,48 +21,107 @@ ChartJS.register(
 );
 
 function BarChart({ expensesArr }) {
-  const minuteData = expensesArr.reduce((acc, expense) => {
-    const minute = new Date(expense.createdAt).getMinutes();
-    const key = `${minute}`;
+  // const dataByMinute = {};
 
-    if (!acc[key]) {
-      acc[key] = 0;
-    }
+  // expensesArr.forEach((item) => {
+  //   const createdAt = moment(item.createdAt);
+  //   const minute = createdAt.format("YYYY-MM-DD HH:mm"); // Group by minute
+  //   const salary = item.salary;
 
-    acc[key] += expense.salary;
+  //   if (dataByMinute[minute]) {
+  //     dataByMinute[minute] = salary;
+  //   } else {
+  //     dataByMinute[minute] = salary;
+  //   }
+  // });
 
-    return acc;
-  }, {});
+  // Extract the minutes and salary sums for chart data
+  // const minutes = Object.keys(dataByMinute);
+  // const salaries = Object.values(dataByMinute);
 
-  // Convert minuteData into an array
-  const data = Object.keys(minuteData).map((minute) => ({
-    minute: parseInt(minute),
-    amount: minuteData[minute],
-  }));
+  // const chartData = {
+  //   labels: minutes,
+  //   datasets: [
+  //     {
+  //       label: "Salary",
+  //       data: salaries,
+  //       backgroundColor: "rgba(75,192,192,0.2)", // Bar color
+  //       borderColor: "rgba(75,192,192,1)", // Border color
+  //       borderWidth: 1,
+  //     },
+  //   ],
+  // };
+
+  // const chartOptions = {
+  //   scales: {
+  //     x: {
+  //       title: {
+  //         display: true,
+  //         text: "Minutes",
+  //       },
+  //     },
+  //     y: {
+  //       title: {
+  //         display: true,
+  //         text: "Salary",
+  //       },
+  //     },
+  //   },
+  // };
+  // console.log(expensesArr);
+
+  const salaries = [];
+  const minutes = [];
+
+  expensesArr.forEach((expense) => {
+    const originalDate = new Date(expense.createdAt);
+    const formattedDate = moment(originalDate).format("YY/MM/DD-HH:mm:ss");
+
+    salaries.push(expense.salary);
+    minutes.push(formattedDate);
+  });
 
   const chartData = {
-    labels: data.map((entry) => entry.minute),
+    labels: minutes,
     datasets: [
       {
-        label: "Expenses",
-        data: data.map((entry) => entry.amount),
-        fill: false,
-        borderColor: "rgb(75, 192, 192)",
-        tension: 0.1,
+        label: "Salary",
+        data: salaries,
+        backgroundColor: "rgba(75,192,192,0.2)", // Bar color
+        borderColor: "rgba(75,192,192,1)", // Border color
+        borderWidth: 1,
       },
     ],
   };
 
+  const chartOptions = {
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Minutes",
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Salary",
+        },
+      },
+    },
+  };
+
   return (
     <TitleCard title={"Revenue"}>
-      <Line data={chartData} />
+      <Bar data={chartData} options={chartOptions} />
     </TitleCard>
   );
 }
 
 export default BarChart;
 
-// const data = [
+// const data =
+// [
 //   {
 //     _id: "652236c6c7fa0566e1ec53bc",
 //     zoneId: "6511cce1235e6675447454dc",

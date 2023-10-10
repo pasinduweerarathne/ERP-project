@@ -76,7 +76,7 @@ const SalaryManagement = () => {
       <TitleCard
         title="title"
         topMargin="mt-2"
-        TopSideButtons={<TopSideButtons />}
+        // TopSideButtons={<TopSideButtons />}
         SearchBar={
           <SearchBar
             placeholderText={"Search Employees"}
@@ -92,7 +92,12 @@ const SalaryManagement = () => {
           </h1>
         ) : (
           <Table
-            tableHeader={["name", "zone", "section", "salary", "actions"]}
+            tableHeader={[
+              "name",
+              "available salary",
+              "last withrawal amount and date",
+              "actions",
+            ]}
             tableBody={
               fetchSalaries.modelResults
                 ? fetchSalaries?.modelResults
