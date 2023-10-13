@@ -15,7 +15,7 @@ export const dashboardSlice = createSlice({
   name: "dashboard",
   initialState: {
     isLoading: false,
-    total: { totalExpenses: 0, totalIncomes: 0, expenses: [] },
+    total: { totalExpenses: 0, totalIncomes: 0, expenses: [], incomes: [] },
   },
   reducers: {},
   extraReducers: {
@@ -26,6 +26,7 @@ export const dashboardSlice = createSlice({
       state.total.totalExpenses = action.payload.totalExpenses;
       state.total.totalIncomes = action.payload.totalIncomes;
       state.total.expenses = action.payload.expenses;
+      state.total.incomes = action.payload.incomes;
       state.isLoading = false;
     },
     [getAllExpensesAndIncomes.rejected]: (state) => {

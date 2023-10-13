@@ -9,6 +9,7 @@ import {
   Legend,
 } from "chart.js";
 import moment, { min } from "moment";
+import { useEffect, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 
 ChartJS.register(
@@ -20,145 +21,103 @@ ChartJS.register(
   Legend
 );
 
-function BarChart({ expensesArr }) {
-  // const dataByMinute = {};
+function BarChart({ array, chartYaxisName }) {
+  const [chartData, setChartData] = useState(null);
 
-  // expensesArr.forEach((item) => {
-  //   const createdAt = moment(item.createdAt);
-  //   const minute = createdAt.format("YYYY-MM-DD HH:mm"); // Group by minute
-  //   const salary = item.salary;
+  // Calculate total salaries by day and zone
+  useEffect(() => {
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
 
-  //   if (dataByMinute[minute]) {
-  //     dataByMinute[minute] = salary;
-  //   } else {
-  //     dataByMinute[minute] = salary;
-  //   }
-  // });
-
-  // Extract the minutes and salary sums for chart data
-  // const minutes = Object.keys(dataByMinute);
-  // const salaries = Object.values(dataByMinute);
-
-  // const chartData = {
-  //   labels: minutes,
-  //   datasets: [
-  //     {
-  //       label: "Salary",
-  //       data: salaries,
-  //       backgroundColor: "rgba(75,192,192,0.2)", // Bar color
-  //       borderColor: "rgba(75,192,192,1)", // Border color
-  //       borderWidth: 1,
-  //     },
-  //   ],
-  // };
-
-  // const chartOptions = {
-  //   scales: {
-  //     x: {
-  //       title: {
-  //         display: true,
-  //         text: "Minutes",
-  //       },
-  //     },
-  //     y: {
-  //       title: {
-  //         display: true,
-  //         text: "Salary",
-  //       },
-  //     },
-  //   },
-  // };
-  // console.log(expensesArr);
-
-  const salaries = [];
-  const minutes = [];
-
-  expensesArr.forEach((expense) => {
-    const originalDate = new Date(expense.createdAt);
-    const formattedDate = moment(originalDate).format("YY/MM/DD-HH:mm:ss");
-
-    salaries.push(expense.salary);
-    minutes.push(formattedDate);
-  });
-
-  const chartData = {
-    labels: minutes,
-    datasets: [
-      {
-        label: "Salary",
-        data: salaries,
-        backgroundColor: "rgba(75,192,192,0.2)", // Bar color
-        borderColor: "rgba(75,192,192,1)", // Border color
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const chartOptions = {
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: "Minutes",
+    const data = {
+      labels: days,
+      datasets: [
+        {
+          label: "gold-star-1",
+          data: new Array(7).fill(0),
+          backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(
+            16
+          )}`,
         },
-      },
-      y: {
-        title: {
-          display: true,
-          text: "Salary",
+        {
+          label: "gold-star-2",
+          data: new Array(7).fill(0),
+          backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(
+            16
+          )}`,
         },
-      },
-    },
-  };
+        {
+          label: "gold-star-3",
+          data: new Array(7).fill(0),
+          backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(
+            16
+          )}`,
+        },
+        {
+          label: "gold-star-4",
+          data: new Array(7).fill(0),
+          backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(
+            16
+          )}`,
+        },
+      ],
+    };
+
+    array.forEach((item) => {
+      const createdAt = new Date(item.createdAt);
+      const dayOfWeek = createdAt.getDay();
+      const zone = item.zoneSlug;
+
+      // Increment the salary for the corresponding day and zone
+      if (item.salary) {
+        data.datasets.find((dataset) => dataset.label === zone).data[
+          dayOfWeek
+        ] += item.salary;
+      }
+
+      if (item.amount) {
+        data.datasets.find((dataset) => dataset.label === zone).data[
+          dayOfWeek
+        ] += item.amount;
+      }
+    });
+
+    setChartData(data);
+  }, [array]);
 
   return (
-    <TitleCard title={"Revenue"}>
-      <Bar data={chartData} options={chartOptions} />
+    <TitleCard>
+      {chartData && (
+        <Bar
+          data={chartData}
+          options={{
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: `${chartYaxisName}`,
+                },
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "Days of the Week",
+                },
+              },
+            },
+          }}
+        />
+      )}
     </TitleCard>
   );
 }
 
 export default BarChart;
-
-// const data =
-// [
-//   {
-//     _id: "652236c6c7fa0566e1ec53bc",
-//     zoneId: "6511cce1235e6675447454dc",
-//     zoneSlug: "gold-star-3",
-//     categoryName: "New Tea",
-//     empName: "Yoga Shanthi",
-//     eDescription: "one",
-//     type: "Expense",
-//     salary: 1200,
-//     createdAt: "2023-10-08T04:57:43.404+00:00",
-//     updatedAt: "2023-10-08T04:57:43.404+00:00",
-//     __v: 0,
-//   },
-//   {
-//     _id: "652236c6c7fa0566e1ec53bc",
-//     zoneId: "6511cce1235e6675447454dc",
-//     zoneSlug: "gold-star-3",
-//     categoryName: "New Tea",
-//     empName: "Yoga Shanthi",
-//     eDescription: "one",
-//     type: "Expense",
-//     salary: 1200,
-//     createdAt: "2023-10-08T04:57:43.404+00:00",
-//     updatedAt: "2023-10-08T04:57:43.404+00:00",
-//     __v: 0,
-//   },
-//   {
-//     _id: "652236c6c7fa0566e1ec53bc",
-//     zoneId: "6511cce1235e6675447454dc",
-//     zoneSlug: "gold-star-3",
-//     categoryName: "New Tea",
-//     empName: "Yoga Shanthi",
-//     eDescription: "one",
-//     type: "Expense",
-//     salary: 1200,
-//     createdAt: "2023-10-08T04:57:43.404+00:00",
-//     updatedAt: "2023-10-08T04:57:43.404+00:00",
-//     __v: 0,
-//   },
-// ];

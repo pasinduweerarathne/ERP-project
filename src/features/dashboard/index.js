@@ -5,7 +5,7 @@ import BarChart from "./components/BarChart";
 import DashboardTopBar from "./components/DashboardTopBar";
 import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "../common/headerSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getAllExpensesAndIncomes } from "./dashboardSlice";
 
 function Dashboard() {
@@ -53,9 +53,17 @@ function Dashboard() {
       </div>
 
       {/** ---------------------- Different charts ------------------------- */}
-      <div className="grid lg:grid-cols-1 mt-4 grid-cols-1 gap-6">
+      <div className="grid lg:grid-cols-2 mt-2 md:grid-cols-2 grid-cols-1 gap-6">
         {/* <LineChart /> */}
-        <BarChart expensesArr={fetchTotExpAndInc?.expenses} />
+        <BarChart
+          array={fetchTotExpAndInc.expenses}
+          chartYaxisName="Total Expenses"
+        />
+
+        <BarChart
+          array={fetchTotExpAndInc.incomes}
+          chartYaxisName="Total Incomes"
+        />
       </div>
 
       {/** ---------------------- User source channels table  ------------------------- */}
