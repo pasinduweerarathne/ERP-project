@@ -1,37 +1,27 @@
 import DashboardStats from "./components/DashboardStats";
-import UserChannels from "./components/UserChannels";
-import LineChart from "./components/LineChart";
 import BarChart from "./components/BarChart";
 import DashboardTopBar from "./components/DashboardTopBar";
 import { useDispatch, useSelector } from "react-redux";
-import { showNotification } from "../common/headerSlice";
 import { useEffect, useState } from "react";
-import { getAllExpensesAndIncomes } from "./dashboardSlice";
+import {
+  getAllExpensesAndIncomes,
+  getDashboardChartData,
+} from "./dashboardSlice";
 
 function Dashboard() {
   const dispatch = useDispatch();
-
-  const updateDashboardPeriod = (newRange) => {
-    // Dashboard range changed, write code to refresh your values
-    dispatch(
-      showNotification({
-        message: `Period updated to ${newRange.startDate} to ${newRange.endDate}`,
-        status: 1,
-      })
-    );
-  };
+  const [period, setPeriod] = useState("THIS_WEEK");
 
   useEffect(() => {
     dispatch(getAllExpensesAndIncomes());
-  }, []);
+    dispatch(getDashboardChartData(period));
+  }, [period]);
 
   const fetchTotExpAndInc = useSelector((state) => state.dashboard.total);
+  const dashboardData = useSelector((state) => state.dashboard.dashboardData);
 
   return (
     <>
-      {/** ---------------------- Select Period Content ------------------------- */}
-      <DashboardTopBar updateDashboardPeriod={updateDashboardPeriod} />
-
       {/** ---------------------- Different stats content 1 ------------------------- */}
       <div className="grid lg:grid-cols-3 mt-2 md:grid-cols-2 grid-cols-1 gap-6">
         <DashboardStats
@@ -52,17 +42,24 @@ function Dashboard() {
         />
       </div>
 
+      {/** ---------------------- Select Period Content ------------------------- */}
+      <DashboardTopBar setPeriod={setPeriod} />
+
       {/** ---------------------- Different charts ------------------------- */}
-      <div className="grid lg:grid-cols-2 mt-2 md:grid-cols-2 grid-cols-1 gap-6">
+      <div className="grid lg:grid-cols-1 mt-1 md:grid-cols-2 grid-cols-1 gap-6">
         {/* <LineChart /> */}
         <BarChart
-          array={fetchTotExpAndInc.expenses}
           chartYaxisName="Total Expenses"
+          period={period}
+          array={dashboardData?.filteredExpenses}
+          xAxisLabels={dashboardData?.xAxisLabels}
         />
 
         <BarChart
-          array={fetchTotExpAndInc.incomes}
+          array={dashboardData?.filteredIncomes}
           chartYaxisName="Total Incomes"
+          period={period}
+          xAxisLabels={dashboardData?.xAxisLabels}
         />
       </div>
 

@@ -3,9 +3,21 @@ import axios from "axios";
 import { baseUrl } from "../../utils/globalVariables";
 
 export const getAllExpensesAndIncomes = createAsyncThunk(
-  "/salaries/fetchDashboardTotalExpensesAndIncomes",
+  "/dashboard/fetchDashboardTotalExpensesAndIncomes",
   async () => {
     const res = await axios.get(`${baseUrl}/dashboard/expensesAndIncomes`, {});
+
+    return res.data;
+  }
+);
+
+export const getDashboardChartData = createAsyncThunk(
+  "/dashboard/getDashbardChartData",
+  async (period) => {
+    const res = await axios.get(
+      `${baseUrl}/dashboard/getChartData/${period}`,
+      {}
+    );
 
     return res.data;
   }
@@ -15,7 +27,8 @@ export const dashboardSlice = createSlice({
   name: "dashboard",
   initialState: {
     isLoading: false,
-    total: { totalExpenses: 0, totalIncomes: 0, expenses: [], incomes: [] },
+    total: { totalExpenses: 0, totalIncomes: 0 },
+    dashboardData: {},
   },
   reducers: {},
   extraReducers: {
@@ -31,6 +44,9 @@ export const dashboardSlice = createSlice({
     },
     [getAllExpensesAndIncomes.rejected]: (state) => {
       state.isLoading = false;
+    },
+    [getDashboardChartData.fulfilled]: (state, action) => {
+      state.dashboardData = action.payload;
     },
   },
 });

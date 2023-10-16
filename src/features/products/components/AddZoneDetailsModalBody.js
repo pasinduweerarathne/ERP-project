@@ -13,6 +13,7 @@ import {
   fetchAllEmployees,
   fetchZones,
 } from "../productSlice";
+import SelectBox from "../../../components/Input/SelectBox";
 
 function convertString(str) {
   return str
@@ -274,6 +275,7 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
             containerStyle="mt-4"
             labelTitle="Amount"
             updateFormValue={updateFormValue}
+            defaultText={true}
           />
           <ErrorText styleClass="mt-5">{formErrors.amount}</ErrorText>
 
@@ -292,13 +294,25 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
 
       {formData.type === "Expense" && (
         <>
-          <SelectOption
+          {/* <SelectOption
             label="Employee Name"
             id="empName"
             defaultValue={formData.empName}
             options={selectOptionValues.employeeList}
             updateFormValue={updateFormValue}
             updateType="empName"
+            defaultText={false}
+          /> */}
+          <SelectBox
+            labelTitle="Select Employee"
+            // labelDescription={}
+            defaultValue={formData.empName}
+            containerStyle={"w-full"}
+            placeholder={""}
+            // labelStyle={}
+            options={selectOptionValues.employeeList}
+            updateType={"empName"}
+            updateFormValue={updateFormValue}
           />
           <ErrorText styleClass="mt-5">{formErrors.empName}</ErrorText>
 

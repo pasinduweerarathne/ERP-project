@@ -4,15 +4,21 @@ const SelectOption = ({
   label,
   id,
   defaultValue,
+  defaultText,
   options,
   updateType,
   updateFormValue,
 }) => {
   const [value, setValue] = useState(defaultValue);
+  // console.log(defaultText);
 
   const updateInputValue = (val) => {
     setValue(val);
-    updateFormValue({ updateType, value: val });
+    if (!updateType) {
+      updateFormValue(val);
+    } else {
+      updateFormValue({ updateType, value: val });
+    }
   };
 
   return (
@@ -27,10 +33,10 @@ const SelectOption = ({
         value={value}
         onChange={(e) => updateInputValue(e.target.value)}
       >
-        <option value=""></option>
-        {options?.map((emp, i) => (
-          <option key={i} value={emp.value}>
-            {emp.text}
+        {<option value=""></option>}
+        {options?.map((item, i) => (
+          <option key={i} value={item.value}>
+            {item.text}
           </option>
         ))}
       </select>

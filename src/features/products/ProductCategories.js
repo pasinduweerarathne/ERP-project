@@ -79,8 +79,9 @@ const ProductCategories = () => {
       </div>
 
       <div className={`grid grid-cols-3 gap-4 pt-8`}>
-        {categoires[0]?.map((product) => (
+        {categoires[0]?.map((product, i) => (
           <NavLink
+            key={i}
             to={`/app/zones/${zone}/${product
               .toLowerCase()
               .replace(/ /g, "-")}`}

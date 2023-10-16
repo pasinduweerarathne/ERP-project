@@ -10,7 +10,7 @@ import {
 } from "chart.js";
 import moment, { min } from "moment";
 import { useEffect, useState } from "react";
-import { Bar, Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
@@ -21,48 +21,39 @@ ChartJS.register(
   Legend
 );
 
-function BarChart({ array, chartYaxisName }) {
+function BarChart({ chartYaxisName, array, xAxisLabels }) {
   const [chartData, setChartData] = useState(null);
+  console.log(array);
 
   // Calculate total salaries by day and zone
   useEffect(() => {
-    const days = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-
     const data = {
-      labels: days,
+      labels: xAxisLabels,
       datasets: [
         {
           label: "gold-star-1",
-          data: new Array(7).fill(0),
+          data: new Array(xAxisLabels?.length).fill(0),
           backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(
             16
           )}`,
         },
         {
           label: "gold-star-2",
-          data: new Array(7).fill(0),
+          data: new Array(xAxisLabels?.length).fill(0),
           backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(
             16
           )}`,
         },
         {
           label: "gold-star-3",
-          data: new Array(7).fill(0),
+          data: new Array(xAxisLabels?.length).fill(0),
           backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(
             16
           )}`,
         },
         {
           label: "gold-star-4",
-          data: new Array(7).fill(0),
+          data: new Array(xAxisLabels?.length).fill(0),
           backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(
             16
           )}`,
@@ -70,22 +61,49 @@ function BarChart({ array, chartYaxisName }) {
       ],
     };
 
-    array.forEach((item) => {
+    array?.forEach((item) => {
       const createdAt = new Date(item.createdAt);
-      const dayOfWeek = createdAt.getDay();
       const zone = item.zoneSlug;
+
+      // for days
+      const dayOfWeek = createdAt.getDay();
+
+      // for weeks
+      const startOfMonth = moment(createdAt).startOf("month");
+      const currentWeek = moment(createdAt).diff(startOfMonth, "weeks");
+
+      // for year
+      const month = moment(createdAt).month();
 
       // Increment the salary for the corresponding day and zone
       if (item.salary) {
-        data.datasets.find((dataset) => dataset.label === zone).data[
-          dayOfWeek
-        ] += item.salary;
+        if (xAxisLabels?.length === 7) {
+          data.datasets.find((dataset) => dataset.label === zone).data[
+            dayOfWeek
+          ] += item.salary;
+        } else if (xAxisLabels?.length === 5) {
+          data.datasets.find((dataset) => dataset.label === zone).data[
+            currentWeek
+          ] += item.salary;
+        } else if (xAxisLabels?.length === 12) {
+          data.datasets.find((dataset) => dataset.label === zone).data[month] +=
+            item.salary;
+        }
       }
 
       if (item.amount) {
-        data.datasets.find((dataset) => dataset.label === zone).data[
-          dayOfWeek
-        ] += item.amount;
+        if (xAxisLabels?.length === 7) {
+          data.datasets.find((dataset) => dataset.label === zone).data[
+            dayOfWeek
+          ] += item.amount;
+        } else if (xAxisLabels?.length === 5) {
+          data.datasets.find((dataset) => dataset.label === zone).data[
+            currentWeek
+          ] += item.amount;
+        } else if (xAxisLabels?.length === 12) {
+          data.datasets.find((dataset) => dataset.label === zone).data[month] +=
+            item.amount;
+        }
       }
     });
 
@@ -109,7 +127,6 @@ function BarChart({ array, chartYaxisName }) {
               x: {
                 title: {
                   display: true,
-                  text: "Days of the Week",
                 },
               },
             },
