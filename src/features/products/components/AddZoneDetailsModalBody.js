@@ -86,8 +86,8 @@ function AddZoneDetailsModalBody({ closeModal, extraObject }) {
     ],
     employeeList: empNames,
     resource: [
-      { text: "Factory 1", value: "Factory 1" },
-      { text: "Factory 2", value: "Factory 2" },
+      { text: "Wathurawila Tea Factory", value: "Wathurawila Tea Factory" },
+      { text: "Hilkandura Tea Factory", value: "Hilkandura Tea Factory" },
     ],
   };
 
